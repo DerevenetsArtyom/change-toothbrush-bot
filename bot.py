@@ -2,9 +2,11 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from telegram.ext import Updater, CommandHandler
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
-from .utils import error_logger
+from utils import error_logger
+
 load_dotenv()
 
 # Enable logging
@@ -14,9 +16,19 @@ logger = logging.getLogger(__name__)
 
 
 # function to handle the /start command
-def start(update, context):
-    first_name = update.message.chat.first_name
-    update.message.reply_text(f'Hi, {first_name}, nice to meet yaa!!!')
+def start(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /start is issued."""
+
+    user = update.effective_user
+    update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
+
+
+def add_new_entry(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('You are going to add a new entry!')
+
+
+def show_pending(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Soon we\'ll show you all your pending entries')
 
 
 def main():
@@ -26,12 +38,13 @@ def main():
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
 
-    # add handlers for /start and /help commands
+    # Handlers for main commands
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help))
+    dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
+    dispatcher.add_handler(CommandHandler("list", show_pending))
 
     # add an handler for normal text (not commands)
-    dispatcher.add_handler(MessageHandler(Filters.text, text))
+    # dispatcher.add_handler(MessageHandler(Filters.text, text))
 
     # add an handler for errors
     dispatcher.add_error_handler(error_logger)
