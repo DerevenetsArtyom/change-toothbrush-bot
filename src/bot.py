@@ -14,8 +14,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+"""
+It should look like:
 
-# function to handle the /start command
+1. Add topic/subject of notification
+2. Add expiration date - when event should expire and you should be notified
+3. Add intermediate notification date (optional) - when user should be notified first time and take some action
+4. Confirmation! (user should verify and approve collected data from his input)
+"""
+
+
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
 
@@ -24,7 +32,14 @@ def start(update: Update, context: CallbackContext) -> None:
 
 
 def add_new_entry(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('You are going to add a new entry!')
+    """
+    Should look like: /add_new [action/verb] [thing/subject] -> /add_new купил фильтр для воды
+    """
+
+    action = context.args[0]
+    thing = " ".join(context.args[1:])
+
+    update.message.reply_text(f'You are going to add a new entry - action: {action}, thing: {thing}')
 
 
 def show_pending(update: Update, context: CallbackContext) -> None:
