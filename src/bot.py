@@ -43,7 +43,22 @@ def add_new_entry(update: Update, context: CallbackContext) -> None:
 
 
 def show_pending(update: Update, context: CallbackContext) -> None:
+    """
+    User should be able to request from bot all his pending events (that are waiting its notification time).
+
+    #TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
+    """
+
     update.message.reply_text('Soon we\'ll show you all your pending entries')
+
+
+def show_archived(update: Update, context: CallbackContext) -> None:
+    """
+    User should be able to request from bot all his archived events (it's "completed" events actually).
+
+    """
+
+    update.message.reply_text('Soon we\'ll show you all your archived entries')
 
 
 def main():
@@ -57,6 +72,7 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
     dispatcher.add_handler(CommandHandler("list", show_pending))
+    dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
     # add an handler for normal text (not commands)
     # dispatcher.add_handler(MessageHandler(Filters.text, text))
@@ -64,10 +80,11 @@ def main():
     # add an handler for errors
     dispatcher.add_error_handler(error_logger)
 
-    # start your shiny new bot
+    # Start the Bot
     updater.start_polling()
 
-    # run the bot until Ctrl-C
+    # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM or SIGABRT.
+    # This should be used most of the time, since start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
 
 
