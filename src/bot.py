@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
 
 from utils import error_logger
 
@@ -23,23 +23,60 @@ It should look like:
 4. Confirmation! (user should verify and approve collected data from his input)
 """
 
+SUBJECT, EXPIRATION_TIME, NOTIFICATION_TIME, CONFIRMATION = range(4)
+
 
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
 
+    logger.info("start")
     user = update.effective_user
     update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
+
+    return SUBJECT
 
 
 def add_new_entry(update: Update, context: CallbackContext) -> None:
     """
     Should look like: /add_new [action/verb] [thing/subject] -> /add_new купил фильтр для воды
     """
+    logger.info('add_new_entry update.message.text %s', update.message.text)
 
-    action = context.args[0]
-    thing = " ".join(context.args[1:])
+    context.user_data["entry"] = update.message.text
 
-    update.message.reply_text(f'You are going to add a new entry - action: {action}, thing: {thing}')
+    update.message.reply_text(f'You\'ve added a new entry! Now add expiration time')
+
+    return EXPIRATION_TIME
+
+
+def expiration_time(update: Update, context: CallbackContext) -> None:
+    logger.info('expiration_time update.message.text %s', update.message.text)
+    logger.info('expiration_time context.user_data %s', context.user_data)
+
+    context.user_data["expiration_time"] = update.message.text
+
+    update.message.reply_text(f"You've added expiration time! Now add notification time")
+
+    return NOTIFICATION_TIME
+
+
+def notification_time(update: Update, context: CallbackContext) -> None:
+    logger.info('notification_time update.message.text %s', update.message.text)
+    logger.info('notification_time context.user_data %s', context.user_data)
+
+    context.user_data["notification_time"] = update.message.text
+
+    update.message.reply_text(f"You've added notification time! Confirm tha data below")
+    return CONFIRMATION
+
+
+def confirmation(update: Update, context: CallbackContext) -> None:
+    logger.info('confirmation update.message.text %s', update.message.text)
+    logger.info('confirmation context.user_data %s', context.user_data)
+
+    update.message.reply_text("context.user_data")
+    update.message.reply_text(context.user_data)
+    return ConversationHandler.END
 
 
 def show_pending(update: Update, context: CallbackContext) -> None:
@@ -61,6 +98,16 @@ def show_archived(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Soon we\'ll show you all your archived entries')
 
 
+def cancel(update: Update, _: CallbackContext) -> int:
+    user = update.message.from_user
+    logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text(
+        'Bye! I hope we can talk again some day.'
+    )
+
+    return ConversationHandler.END
+
+
 def main():
     telegram_token = os.getenv("TELEGRAM_TOKEN")
 
@@ -69,13 +116,39 @@ def main():
     dispatcher = updater.dispatcher
 
     # Handlers for main commands
-    dispatcher.add_handler(CommandHandler("start", start))
+
+    # TODO: this should be disabled for ConversationHandler
+    # dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
     dispatcher.add_handler(CommandHandler("list", show_pending))
     dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
     # add an handler for normal text (not commands)
     # dispatcher.add_handler(MessageHandler(Filters.text, text))
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', start)],
+        states={
+            SUBJECT: [MessageHandler(Filters.text, add_new_entry, pass_user_data=True)],
+            EXPIRATION_TIME: [MessageHandler(Filters.text, expiration_time)],
+            NOTIFICATION_TIME: [MessageHandler(Filters.text, notification_time)],
+            CONFIRMATION: [MessageHandler(Filters.text, confirmation)],
+
+            # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
+            # PHOTO: [
+            #     MessageHandler(Filters.photo, photo),
+            #     CommandHandler('skip', skip_photo)
+            # ],
+            # LOCATION: [
+            #     MessageHandler(Filters.location, location),
+            #     CommandHandler('skip', skip_location),
+            # ],
+            # BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
+        },
+        fallbacks=[CommandHandler('cancel', cancel)],
+    )
+
+    dispatcher.add_handler(conv_handler)
 
     # add an handler for errors
     dispatcher.add_error_handler(error_logger)
