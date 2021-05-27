@@ -29,14 +29,21 @@ SUBJECT, EXPIRATION_TIME, NOTIFICATION_TIME, CONFIRMATION = range(4)
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
 
-    logger.info("start")
+    # TODO: add nice introductory text with list of commands
+
     user = update.effective_user
     update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
+
+    update.message.reply_text("The available commands for now: /add")
+
+
+def start_creating_entry(update: Update, context: CallbackContext) -> int:
+    update.message.reply_text(f'Enter subject / entry below')
 
     return SUBJECT
 
 
-def add_new_entry(update: Update, context: CallbackContext) -> None:
+def add_new_entry(update: Update, context: CallbackContext) -> int:
     """
     Should look like: /add_new [action/verb] [thing/subject] -> /add_new купил фильтр для воды
     """
@@ -49,7 +56,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> None:
     return EXPIRATION_TIME
 
 
-def expiration_time(update: Update, context: CallbackContext) -> None:
+def expiration_time(update: Update, context: CallbackContext) -> int:
     logger.info('expiration_time update.message.text %s', update.message.text)
     logger.info('expiration_time context.user_data %s', context.user_data)
 
@@ -60,20 +67,21 @@ def expiration_time(update: Update, context: CallbackContext) -> None:
     return NOTIFICATION_TIME
 
 
-def notification_time(update: Update, context: CallbackContext) -> None:
+def notification_time(update: Update, context: CallbackContext) -> int:
     logger.info('notification_time update.message.text %s', update.message.text)
-    logger.info('notification_time context.user_data %s', context.user_data)
+    logger.info('notification_time context.user_data before %s', context.user_data)
 
     context.user_data["notification_time"] = update.message.text
 
-    update.message.reply_text(f"You've added notification time! Confirm tha data below")
+    logger.info('notification_time context.user_data after  %s', context.user_data)
     return CONFIRMATION
 
 
-def confirmation(update: Update, context: CallbackContext) -> None:
+def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info('confirmation update.message.text %s', update.message.text)
     logger.info('confirmation context.user_data %s', context.user_data)
 
+    update.message.reply_text(f"You've added notification time! Confirm tha data below")
     update.message.reply_text("context.user_data")
     update.message.reply_text(context.user_data)
     return ConversationHandler.END
@@ -117,19 +125,15 @@ def main():
 
     # Handlers for main commands
 
-    # TODO: this should be disabled for ConversationHandler
-    # dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
-    dispatcher.add_handler(CommandHandler("list", show_pending))
-    dispatcher.add_handler(CommandHandler("list_old", show_archived))
-
-    # add an handler for normal text (not commands)
-    # dispatcher.add_handler(MessageHandler(Filters.text, text))
+    dispatcher.add_handler(CommandHandler("start", start))
+    # dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
+    # dispatcher.add_handler(CommandHandler("list", show_pending))
+    # dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[CommandHandler('add', start_creating_entry)],
         states={
-            SUBJECT: [MessageHandler(Filters.text, add_new_entry, pass_user_data=True)],
+            SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
             EXPIRATION_TIME: [MessageHandler(Filters.text, expiration_time)],
             NOTIFICATION_TIME: [MessageHandler(Filters.text, notification_time)],
             CONFIRMATION: [MessageHandler(Filters.text, confirmation)],
