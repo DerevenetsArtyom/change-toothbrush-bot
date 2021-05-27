@@ -74,6 +74,11 @@ def notification_time(update: Update, context: CallbackContext) -> int:
     context.user_data["notification_time"] = update.message.text
 
     logger.info('notification_time context.user_data after  %s', context.user_data)
+
+    update.message.reply_text(f"You've added notification time! Confirm tha data below")
+    update.message.reply_text("context.user_data")
+    update.message.reply_text(context.user_data)
+
     return CONFIRMATION
 
 
@@ -81,9 +86,10 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info('confirmation update.message.text %s', update.message.text)
     logger.info('confirmation context.user_data %s', context.user_data)
 
-    update.message.reply_text(f"You've added notification time! Confirm tha data below")
-    update.message.reply_text("context.user_data")
-    update.message.reply_text(context.user_data)
+    # TODO: this place seems to be a nice one for creating DB record after confirmation
+
+    update.message.reply_text(f"Great! The entry has been created!")
+
     return ConversationHandler.END
 
 
