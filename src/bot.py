@@ -75,9 +75,15 @@ def notification_time(update: Update, context: CallbackContext) -> int:
 
     logger.info('notification_time context.user_data after  %s', context.user_data)
 
-    update.message.reply_text(f"You've added notification time! Confirm tha data below")
-    update.message.reply_text("context.user_data")
-    update.message.reply_text(context.user_data)
+    update.message.reply_text(
+        f'You\'ve added notification time! Confirm tha data below:\n\n'
+        f'Subject - \"{context.user_data["entry"]}\"\n'
+        f'Expiration time - \"{context.user_data["expiration_time"]}\"\n'
+        f'Notification time - \"{context.user_data["notification_time"]}\"\n\n'
+
+        f'If everything is correct, please enter /done command.'
+        f'If not, enter /cancel command.'
+    )
 
     return CONFIRMATION
 
@@ -119,6 +125,8 @@ def cancel(update: Update, _: CallbackContext) -> int:
         'Bye! I hope we can talk again some day.'
     )
 
+    # TODO: flush "context.user_data" is user canceled the thing
+
     return ConversationHandler.END
 
 
@@ -142,7 +150,7 @@ def main():
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
             EXPIRATION_TIME: [MessageHandler(Filters.text, expiration_time)],
             NOTIFICATION_TIME: [MessageHandler(Filters.text, notification_time)],
-            CONFIRMATION: [MessageHandler(Filters.text, confirmation)],
+            CONFIRMATION: [CommandHandler('done', confirmation)],
 
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
             # PHOTO: [
