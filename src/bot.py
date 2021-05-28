@@ -23,6 +23,9 @@ It should look like:
 4. Confirmation! (user should verify and approve collected data from his input)
 """
 
+# TODO: add datepickers for dates input and shorthands (in one week, in one month, in three months etc)
+
+
 SUBJECT, EXPIRATION_TIME, NOTIFICATION_TIME, CONFIRMATION = range(4)
 
 
@@ -44,14 +47,12 @@ def start_creating_entry(update: Update, context: CallbackContext) -> int:
 
 
 def add_new_entry(update: Update, context: CallbackContext) -> int:
-    """
-    Should look like: /add_new [action/verb] [thing/subject] -> /add_new купил фильтр для воды
-    """
-    logger.info('add_new_entry update.message.text %s', update.message.text)
+    user_text = update.message.text
+    logger.info('add_new_entry update.message.text %s', user_text)
 
-    context.user_data["entry"] = update.message.text
+    context.user_data["entry"] = user_text
 
-    update.message.reply_text(f'You\'ve added a new entry! Now add expiration time')
+    update.message.reply_text(f'You\'ve added an entry - "{user_text}"! Now add expiration time')
 
     return EXPIRATION_TIME
 
@@ -103,7 +104,7 @@ def show_pending(update: Update, context: CallbackContext) -> None:
     """
     User should be able to request from bot all his pending events (that are waiting its notification time).
 
-    #TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
+    TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
     """
 
     update.message.reply_text('Soon we\'ll show you all your pending entries')
