@@ -1,18 +1,12 @@
-import logging
 import os
 
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
 
-from utils import error_logger
+from utils import error_logger, logger
 
 load_dotenv()
-
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-logger = logging.getLogger(__name__)
 
 """
 It should look like:
@@ -48,7 +42,7 @@ def start_creating_entry(update: Update, context: CallbackContext) -> int:
 
 def add_new_entry(update: Update, context: CallbackContext) -> int:
     user_text = update.message.text
-    logger.info('add_new_entry update.message.text %s', user_text)
+    logger.info('update.message.text %s', user_text)
 
     context.user_data["entry"] = user_text
 
@@ -58,8 +52,8 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
 
 def expiration_time(update: Update, context: CallbackContext) -> int:
-    logger.info('expiration_time update.message.text %s', update.message.text)
-    logger.info('expiration_time context.user_data %s', context.user_data)
+    logger.info('update.message.text %s', update.message.text)
+    logger.info('context.user_data %s', context.user_data)
 
     context.user_data["expiration_time"] = update.message.text
 
@@ -69,12 +63,12 @@ def expiration_time(update: Update, context: CallbackContext) -> int:
 
 
 def notification_time(update: Update, context: CallbackContext) -> int:
-    logger.info('notification_time update.message.text %s', update.message.text)
-    logger.info('notification_time context.user_data before %s', context.user_data)
+    logger.info('update.message.text %s', update.message.text)
+    logger.info('context.user_data before %s', context.user_data)
 
     context.user_data["notification_time"] = update.message.text
 
-    logger.info('notification_time context.user_data after  %s', context.user_data)
+    logger.info('context.user_data after %s', context.user_data)
 
     update.message.reply_text(
         f'You\'ve added notification time! Confirm tha data below:\n\n'
@@ -90,8 +84,8 @@ def notification_time(update: Update, context: CallbackContext) -> int:
 
 
 def confirmation(update: Update, context: CallbackContext) -> int:
-    logger.info('confirmation update.message.text %s', update.message.text)
-    logger.info('confirmation context.user_data %s', context.user_data)
+    logger.info('update.message.text %s', update.message.text)
+    logger.info('context.user_data %s', context.user_data)
 
     # TODO: this place seems to be a nice one for creating DB record after confirmation
 
@@ -122,9 +116,7 @@ def show_archived(update: Update, context: CallbackContext) -> None:
 def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text(
-        'Bye! I hope we can talk again some day.'
-    )
+    update.message.reply_text('Bye! I hope we can talk again some day.')
 
     # TODO: flush "context.user_data" is user canceled the thing
 
