@@ -35,7 +35,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
 
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(f"Enter subject / entry below")
+    update.message.reply_text("Enter subject / entry below")
 
     return SUBJECT
 
@@ -57,7 +57,7 @@ def expiration_time(update: Update, context: CallbackContext) -> int:
 
     context.user_data["expiration_time"] = update.message.text
 
-    update.message.reply_text(f"You've added expiration time! Now add notification time")
+    update.message.reply_text("You've added expiration time! Now add notification time")
 
     return NOTIFICATION_TIME
 
@@ -88,7 +88,7 @@ def confirmation(update: Update, context: CallbackContext) -> int:
 
     # TODO: this place seems to be a nice one for creating DB record after confirmation
 
-    update.message.reply_text(f"Great! The entry has been created!")
+    update.message.reply_text("Great! The entry has been created!")
 
     return ConversationHandler.END
 

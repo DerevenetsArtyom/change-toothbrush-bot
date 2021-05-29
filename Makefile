@@ -8,7 +8,8 @@ help:
 	@echo "  run		Start a bot"
 	@echo "  black		Run black"
 	@echo "  isort		Run isort"
-	@echo "  lint		Run black and isort"
+	@echo "  flake		Run flake8"
+	@echo "  lint		Run black, isort and flake8"
 
 
 # ========
@@ -24,5 +25,8 @@ black:
 isort:
 	@isort src/
 
+flake:
+	@flake8 src/
 
-lint: black isort
+
+lint: flake black isort
