@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
 from utils import error_logger, logger
 
