@@ -29,20 +29,20 @@ def start(update: Update, context: CallbackContext) -> None:
     # TODO: add nice introductory text with list of commands
 
     user = update.effective_user
-    update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
+    update.message.reply_markdown_v2(fr"Hi {user.mention_markdown_v2()}\!")
 
     update.message.reply_text("The available commands for now: /add")
 
 
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(f'Enter subject / entry below')
+    update.message.reply_text(f"Enter subject / entry below")
 
     return SUBJECT
 
 
 def add_new_entry(update: Update, context: CallbackContext) -> int:
     user_text = update.message.text
-    logger.info('update.message.text %s', user_text)
+    logger.info("update.message.text %s", user_text)
 
     context.user_data["entry"] = user_text
 
@@ -52,8 +52,8 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
 
 def expiration_time(update: Update, context: CallbackContext) -> int:
-    logger.info('update.message.text %s', update.message.text)
-    logger.info('context.user_data %s', context.user_data)
+    logger.info("update.message.text %s", update.message.text)
+    logger.info("context.user_data %s", context.user_data)
 
     context.user_data["expiration_time"] = update.message.text
 
@@ -63,29 +63,28 @@ def expiration_time(update: Update, context: CallbackContext) -> int:
 
 
 def notification_time(update: Update, context: CallbackContext) -> int:
-    logger.info('update.message.text %s', update.message.text)
-    logger.info('context.user_data before %s', context.user_data)
+    logger.info("update.message.text %s", update.message.text)
+    logger.info("context.user_data before %s", context.user_data)
 
     context.user_data["notification_time"] = update.message.text
 
-    logger.info('context.user_data after %s', context.user_data)
+    logger.info("context.user_data after %s", context.user_data)
 
     update.message.reply_text(
-        f'You\'ve added notification time! Confirm tha data below:\n\n'
-        f'Subject - \"{context.user_data["entry"]}\"\n'
-        f'Expiration time - \"{context.user_data["expiration_time"]}\"\n'
-        f'Notification time - \"{context.user_data["notification_time"]}\"\n\n'
-
-        f'If everything is correct, please enter /done command.'
-        f'If not, enter /cancel command.'
+        f"You've added notification time! Confirm tha data below:\n\n"
+        f'Subject - "{context.user_data["entry"]}"\n'
+        f'Expiration time - "{context.user_data["expiration_time"]}"\n'
+        f'Notification time - "{context.user_data["notification_time"]}"\n\n'
+        f"If everything is correct, please enter /done command."
+        f"If not, enter /cancel command."
     )
 
     return CONFIRMATION
 
 
 def confirmation(update: Update, context: CallbackContext) -> int:
-    logger.info('update.message.text %s', update.message.text)
-    logger.info('context.user_data %s', context.user_data)
+    logger.info("update.message.text %s", update.message.text)
+    logger.info("context.user_data %s", context.user_data)
 
     # TODO: this place seems to be a nice one for creating DB record after confirmation
 
@@ -101,7 +100,7 @@ def show_pending(update: Update, context: CallbackContext) -> None:
     TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
     """
 
-    update.message.reply_text('Soon we\'ll show you all your pending entries')
+    update.message.reply_text("Soon we'll show you all your pending entries")
 
 
 def show_archived(update: Update, context: CallbackContext) -> None:
@@ -110,13 +109,13 @@ def show_archived(update: Update, context: CallbackContext) -> None:
 
     """
 
-    update.message.reply_text('Soon we\'ll show you all your archived entries')
+    update.message.reply_text("Soon we'll show you all your archived entries")
 
 
 def cancel(update: Update, _: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text('Bye! I hope we can talk again some day.')
+    update.message.reply_text("Bye! I hope we can talk again some day.")
 
     # TODO: flush "context.user_data" is user canceled the thing
 
@@ -138,13 +137,12 @@ def main():
     # dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('add', start_creating_entry)],
+        entry_points=[CommandHandler("add", start_creating_entry)],
         states={
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
             EXPIRATION_TIME: [MessageHandler(Filters.text, expiration_time)],
             NOTIFICATION_TIME: [MessageHandler(Filters.text, notification_time)],
-            CONFIRMATION: [CommandHandler('done', confirmation)],
-
+            CONFIRMATION: [CommandHandler("done", confirmation)],
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
             # PHOTO: [
             #     MessageHandler(Filters.photo, photo),
@@ -156,7 +154,7 @@ def main():
             # ],
             # BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
         },
-        fallbacks=[CommandHandler('cancel', cancel)],
+        fallbacks=[CommandHandler("cancel", cancel)],
     )
 
     dispatcher.add_handler(conv_handler)
@@ -172,5 +170,5 @@ def main():
     updater.idle()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
