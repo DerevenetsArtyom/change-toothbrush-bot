@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
+from models import create_tables
 from utils import error_logger, logger
 
 load_dotenv()
@@ -171,4 +172,5 @@ def main():
 
 
 if __name__ == "__main__":
+    create_tables()
     main()

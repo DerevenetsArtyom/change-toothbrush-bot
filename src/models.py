@@ -1,8 +1,13 @@
 import datetime
+import os
 
 import peewee as pw
+from dotenv import load_dotenv
+from playhouse.db_url import connect
 
-database = pw.SqliteDatabase(None)
+load_dotenv()
+
+database = connect(os.getenv("DATABASE_URL", default="sqlite:///db.sqlite"))
 
 
 class ScheduledEvent:
@@ -37,3 +42,7 @@ class Event(pw.Model):
 
     class Meta:
         database = database
+
+
+def create_tables():
+    database.create_tables([Event])
