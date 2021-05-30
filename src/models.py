@@ -1,3 +1,10 @@
+import datetime
+
+import peewee as pw
+
+database = pw.SqliteDatabase(None)
+
+
 class ScheduledEvent:
     def __init__(self, author, subject, expiration_date, notification_date=None):
         # FK (or ID at least) of user who created event
@@ -18,3 +25,15 @@ class ScheduledEvent:
 
         # flag whether the event is done or not yet. Set when notification goes off at self.notification_date
         self.completed = False
+
+
+class Event(pw.Model):
+    author = pw.CharField(unique=True)
+    subject = pw.CharField()
+    expiration_date = pw.DateField()
+    notification_date = pw.DateField()
+    created = pw.DateField(default=datetime.datetime.now)
+    completed = pw.BooleanField(default=False)
+
+    class Meta:
+        database = database
