@@ -53,6 +53,8 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
 
 def expiration_time(update: Update, context: CallbackContext) -> int:
+    # TODO: add validation for date/time to be in the future only
+
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
@@ -64,6 +66,9 @@ def expiration_time(update: Update, context: CallbackContext) -> int:
 
 
 def notification_time(update: Update, context: CallbackContext) -> int:
+    # TODO: add validation for date/time to be in the future only
+    # TODO: 'notification_date could be optional for input, if nothing is passed - calculate automatically
+
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
@@ -90,6 +95,8 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     # TODO: this place seems to be a nice one for creating DB record after confirmation
 
     update.message.reply_text("Great! The entry has been created!")
+
+    # TODO: show to user newly created data from DB record
 
     return ConversationHandler.END
 
