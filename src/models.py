@@ -44,5 +44,17 @@ class Event(pw.Model):
         database = database
 
 
+def get_pending_events():
+    """Returns all pending events (that are waiting its notification time)."""
+
+
+def get_expired_events():
+    """Returns all archived / expires events (that have been completed already)."""
+
+
+def create_event(user_data):
+    """Creates event from data passed by user"""
+
+
 def create_tables():
     database.create_tables([Event])
