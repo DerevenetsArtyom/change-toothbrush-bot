@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
-from models import create_tables
+from models import User, create_tables
 from utils import error_logger, logger
 
 load_dotenv()
@@ -29,8 +29,22 @@ def start(update: Update, context: CallbackContext) -> None:
 
     # TODO: add nice introductory text with list of commands
 
-    user = update.effective_user
-    update.message.reply_markdown_v2(fr"Hi {user.mention_markdown_v2()}\!")
+    current_user = update.effective_user
+    chat_id = update.message.chat_id
+
+    update.message.reply_markdown_v2(fr"Hi {current_user.mention_markdown_v2()}\!")
+
+    if not User.select().where(User.user_id == current_user.id):
+        User.create(
+            user_id=current_user.id,
+            chat_id=chat_id,
+            first_name=current_user.first_name,
+            last_name=current_user.last_name,
+            username=current_user.username,
+        )
+
+    # Save "user_id" for future linking with new event
+    context.user_data["user_id"] = current_user.id
 
     update.message.reply_text("The available commands for now: /add")
 
