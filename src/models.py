@@ -32,8 +32,19 @@ class ScheduledEvent:
         self.completed = False
 
 
+class User(pw.Model):
+    user_id = pw.IntegerField(unique=True)
+    chat_id = pw.IntegerField()
+    first_name = pw.CharField()
+    last_name = pw.CharField(null=True)
+    username = pw.CharField(null=True)
+
+    class Meta:
+        database = database
+
+
 class Event(pw.Model):
-    author = pw.CharField(unique=True)
+    author = pw.ForeignKeyField(User, backref="events")
     subject = pw.CharField()
     expiration_date = pw.DateField()
     notification_date = pw.DateField()
@@ -58,4 +69,4 @@ def create_event(user_data):
 
 def create_tables():
     with database:
-        database.create_tables([Event])
+        database.create_tables([Event, User])
