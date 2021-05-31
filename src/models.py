@@ -57,4 +57,5 @@ def create_event(user_data):
 
 
 def create_tables():
-    database.create_tables([Event])
+    with database:
+        database.create_tables([Event])
