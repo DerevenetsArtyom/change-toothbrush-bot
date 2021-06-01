@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
-from models import User, create_tables, Event
+from models import Event, User, create_tables
 from utils import error_logger, logger
 
 load_dotenv()
@@ -110,8 +110,8 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    expiration_date = datetime.strptime(context.user_data["expiration_time"], '%d-%m-%y')
-    notification_date = datetime.strptime(context.user_data["notification_time"], '%d-%m-%y')
+    expiration_date = datetime.strptime(context.user_data["expiration_time"], "%d-%m-%y")
+    notification_date = datetime.strptime(context.user_data["notification_time"], "%d-%m-%y")
 
     current_user_id = User.get(user_id=context.user_data["user_id"]).id
     Event.create(
@@ -121,10 +121,7 @@ def confirmation(update: Update, context: CallbackContext) -> int:
         notification_date=notification_date,
     )
 
-    update.message.reply_text(
-        "Great! The entry has been created!\n"
-        "Use /add command if you want to add more."
-    )
+    update.message.reply_text("Great! The entry has been created!\n Use /add command if you want to add more.")
 
     # TODO: show to user newly created data from DB record
 
@@ -138,7 +135,20 @@ def show_pending(update: Update, context: CallbackContext) -> None:
     TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
     """
 
-    update.message.reply_text("Soon we'll show you all your pending entries")
+    current_user_id = User.get(user_id=update.effective_user.id).id
+    user_events = Event.select().where(Event.author == current_user_id)
+
+    if user_events.count() == 0:
+        update.message.reply_text("You don't have entries yet (")
+        return
+
+    update.message.reply_text("All entries you have:")
+    for event in user_events:
+        update.message.reply_text(
+            f"Subject: {event.subject}\n"
+            f"Expiration date: {event.expiration_date}\n"
+            f"Notification date: {event.notification_date}\n"
+        )
 
 
 def show_archived(update: Update, context: CallbackContext) -> None:
@@ -170,8 +180,7 @@ def main():
     # Handlers for main commands
 
     dispatcher.add_handler(CommandHandler("start", start))
-    # dispatcher.add_handler(CommandHandler("add_new", add_new_entry))
-    # dispatcher.add_handler(CommandHandler("list", show_pending))
+    dispatcher.add_handler(CommandHandler("list", show_pending))
     # dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
     conv_handler = ConversationHandler(
