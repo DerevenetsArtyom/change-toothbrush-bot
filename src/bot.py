@@ -1,11 +1,10 @@
 import os
-from datetime import datetime
 
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
-from models import Event, User, create_tables
+from models import Event, User, create_event, create_tables
 from utils import error_logger, logger
 
 load_dotenv()
@@ -110,16 +109,7 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    expiration_date = datetime.strptime(context.user_data["expiration_time"], "%d-%m-%y")
-    notification_date = datetime.strptime(context.user_data["notification_time"], "%d-%m-%y")
-
-    current_user_id = User.get(user_id=context.user_data["user_id"]).id
-    Event.create(
-        author=current_user_id,
-        subject=context.user_data["entry"],
-        expiration_date=expiration_date,
-        notification_date=notification_date,
-    )
+    create_event(context.user_data)
 
     update.message.reply_text("Great! The entry has been created!\n Use /add command if you want to add more.")
 
