@@ -1,10 +1,11 @@
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
 
-from models import User, create_tables
+from models import User, create_tables, Event
 from utils import error_logger, logger
 
 load_dotenv()
@@ -52,6 +53,9 @@ def start(update: Update, context: CallbackContext) -> None:
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
     update.message.reply_text("Enter subject / entry below")
 
+    # Duplicate it here, if '/start' command was skipped
+    context.user_data["user_id"] = update.effective_user.id
+
     return SUBJECT
 
 
@@ -95,7 +99,7 @@ def notification_time(update: Update, context: CallbackContext) -> int:
         f'Subject - "{context.user_data["entry"]}"\n'
         f'Expiration time - "{context.user_data["expiration_time"]}"\n'
         f'Notification time - "{context.user_data["notification_time"]}"\n\n'
-        f"If everything is correct, please enter /done command."
+        f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command."
     )
 
@@ -106,9 +110,21 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    # TODO: this place seems to be a nice one for creating DB record after confirmation
+    expiration_date = datetime.strptime(context.user_data["expiration_time"], '%d-%m-%y')
+    notification_date = datetime.strptime(context.user_data["notification_time"], '%d-%m-%y')
 
-    update.message.reply_text("Great! The entry has been created!")
+    current_user_id = User.get(user_id=context.user_data["user_id"]).id
+    Event.create(
+        author=current_user_id,
+        subject=context.user_data["entry"],
+        expiration_date=expiration_date,
+        notification_date=notification_date,
+    )
+
+    update.message.reply_text(
+        "Great! The entry has been created!\n"
+        "Use /add command if you want to add more."
+    )
 
     # TODO: show to user newly created data from DB record
 
