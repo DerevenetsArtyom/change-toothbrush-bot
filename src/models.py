@@ -7,7 +7,7 @@ from playhouse.db_url import connect
 
 load_dotenv()
 
-database = connect(os.getenv("DATABASE_URL", default="sqlite:///db.sqlite"))
+database = connect(os.getenv("DATABASE_URL", default="sqlite:///db.sqlite3"))
 
 
 class ScheduledEvent:
