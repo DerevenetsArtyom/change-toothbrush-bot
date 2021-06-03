@@ -18,16 +18,11 @@ It should look like:
 4. Confirmation! (user should verify and approve collected data from his input)
 """
 
-# TODO: add datepickers for dates input and shorthands (in one week, in one month, in three months etc)
-
-
 SUBJECT, EXPIRATION_TIME, NOTIFICATION_TIME, CONFIRMATION = range(4)
 
 
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-
-    # TODO: add nice introductory text with list of commands
 
     current_user = update.effective_user
     chat_id = update.message.chat_id
@@ -70,8 +65,6 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
 
 def expiration_time(update: Update, context: CallbackContext) -> int:
-    # TODO: add validation for date/time to be in the future only
-
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
@@ -83,9 +76,6 @@ def expiration_time(update: Update, context: CallbackContext) -> int:
 
 
 def notification_time(update: Update, context: CallbackContext) -> int:
-    # TODO: add validation for date/time to be in the future only
-    # TODO: 'notification_date could be optional for input, if nothing is passed - calculate automatically
-
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
@@ -121,8 +111,6 @@ def confirmation(update: Update, context: CallbackContext) -> int:
 def show_pending(update: Update, context: CallbackContext) -> None:
     """
     User should be able to request from bot all his pending events (that are waiting its notification time).
-
-    TODO: Improvement - not just plain list, but list of entries with action buttons: remove, prolong etc.
     """
 
     current_user_id = User.get(user_id=update.effective_user.id).id
