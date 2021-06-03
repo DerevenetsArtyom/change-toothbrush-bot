@@ -18,7 +18,7 @@ It should look like:
 4. Confirmation! (user should verify and approve collected data from his input)
 """
 
-SUBJECT, EXPIRATION_TIME, NOTIFICATION_TIME, CONFIRMATION = range(4)
+SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -59,35 +59,35 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     context.user_data["entry"] = user_text
 
-    update.message.reply_text(f'You\'ve added an entry - "{user_text}"! Now add expiration time')
+    update.message.reply_text(f"You've added an entry - '{user_text}'! Now add expiration date")
 
-    return EXPIRATION_TIME
+    return EXPIRATION_DATE
 
 
-def expiration_time(update: Update, context: CallbackContext) -> int:
+def expiration_date(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    context.user_data["expiration_time"] = update.message.text
+    context.user_data["expiration_date"] = update.message.text
 
     update.message.reply_text("You've added expiration time! Now add notification time")
 
-    return NOTIFICATION_TIME
+    return NOTIFICATION_DATE
 
 
-def notification_time(update: Update, context: CallbackContext) -> int:
+def notification_date(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
-    context.user_data["notification_time"] = update.message.text
+    context.user_data["notification_date"] = update.message.text
 
     logger.info("context.user_data after %s", context.user_data)
 
     update.message.reply_text(
         f"You've added notification time! Confirm tha data below:\n\n"
         f'Subject - "{context.user_data["entry"]}"\n'
-        f'Expiration time - "{context.user_data["expiration_time"]}"\n'
-        f'Notification time - "{context.user_data["notification_time"]}"\n\n'
+        f'Expiration time - "{context.user_data["expiration_date"]}"\n'
+        f'Notification time - "{context.user_data["notification_date"]}"\n\n'
         f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command."
     )
@@ -165,8 +165,8 @@ def main():
         entry_points=[CommandHandler("add", start_creating_entry)],
         states={
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
-            EXPIRATION_TIME: [MessageHandler(Filters.text, expiration_time)],
-            NOTIFICATION_TIME: [MessageHandler(Filters.text, notification_time)],
+            EXPIRATION_DATE: [MessageHandler(Filters.text, expiration_date)],
+            NOTIFICATION_DATE: [MessageHandler(Filters.text, notification_date)],
             CONFIRMATION: [CommandHandler("done", confirmation)],
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
             # PHOTO: [
