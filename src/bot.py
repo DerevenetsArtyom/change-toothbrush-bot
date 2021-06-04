@@ -1,9 +1,16 @@
 import os
 
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater, \
-    CallbackQueryHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (
+    CallbackContext,
+    CallbackQueryHandler,
+    CommandHandler,
+    ConversationHandler,
+    Filters,
+    MessageHandler,
+    Updater,
+)
 
 from models import Event, User, create_event, create_tables
 from utils import error_logger, logger
@@ -123,14 +130,14 @@ def show_pending(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text("All entries you have:")
     for event in user_events:
-        keyboard = [[InlineKeyboardButton(text="Click to archive!", callback_data=f'event:{event.id}')]]
+        keyboard = [[InlineKeyboardButton(text="Click to archive!", callback_data=f"event:{event.id}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         update.message.reply_text(
             text=f"Subject: {event.subject}\n"
             f"Expiration date: {event.expiration_date}\n"
             f"Notification date: {event.notification_date}\n",
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
         )
 
     update.message.reply_text("After taking some actions, don't forget to call /list again!")
@@ -187,7 +194,7 @@ def main():
 
     dispatcher.add_handler(CallbackQueryHandler(complete_event_handler))
 
-    conv_handler = ConversationHandler(
+    conversation_handler = ConversationHandler(
         entry_points=[CommandHandler("add", start_creating_entry)],
         states={
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
@@ -208,8 +215,7 @@ def main():
         fallbacks=[CommandHandler("cancel", cancel)],
     )
 
-
-    dispatcher.add_handler(conv_handler)
+    dispatcher.add_handler(conversation_handler)
 
     # add an handler for errors
     dispatcher.add_error_handler(error_logger)
