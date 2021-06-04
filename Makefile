@@ -29,4 +29,4 @@ flake:
 	@flake8 src/
 
 
-lint: flake black isort
+lint: black flake isort
