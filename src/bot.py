@@ -1,8 +1,9 @@
 import os
 
 from dotenv import load_dotenv
-from telegram import Update
-from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, Filters, MessageHandler, Updater, \
+    CallbackQueryHandler
 
 from models import Event, User, create_event, create_tables
 from utils import error_logger, logger
@@ -114,7 +115,7 @@ def show_pending(update: Update, context: CallbackContext) -> None:
     """
 
     current_user_id = User.get(user_id=update.effective_user.id).id
-    user_events = Event.select().where(Event.author == current_user_id)
+    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
 
     if user_events.count() == 0:
         update.message.reply_text("You don't have entries yet (")
@@ -122,11 +123,34 @@ def show_pending(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text("All entries you have:")
     for event in user_events:
+        keyboard = [[InlineKeyboardButton(text="Click to archive!", callback_data=f'event:{event.id}')]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
         update.message.reply_text(
-            f"Subject: {event.subject}\n"
+            text=f"Subject: {event.subject}\n"
             f"Expiration date: {event.expiration_date}\n"
-            f"Notification date: {event.notification_date}\n"
+            f"Notification date: {event.notification_date}\n",
+            reply_markup=reply_markup
         )
+
+    update.message.reply_text("After taking some actions, don't forget to call /list again!")
+
+
+def complete_event_handler(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+
+    query.answer()
+
+    if ":" not in query.data:
+        query.message.reply_text("Something went wrong. Don't know your choice")
+        return
+
+    event_id = query.data.split(":")[-1]
+    event = Event.get(Event.id == event_id)
+    event.completed = True
+    event.save()
+
+    query.message.reply_text(f"Event '{event.subject}' was completed and archived! ")
 
 
 def show_archived(update: Update, context: CallbackContext) -> None:
@@ -161,6 +185,8 @@ def main():
     dispatcher.add_handler(CommandHandler("list", show_pending))
     # dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
+    dispatcher.add_handler(CallbackQueryHandler(complete_event_handler))
+
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("add", start_creating_entry)],
         states={
@@ -181,6 +207,7 @@ def main():
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
+
 
     dispatcher.add_handler(conv_handler)
 
