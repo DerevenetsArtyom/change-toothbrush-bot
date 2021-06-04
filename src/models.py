@@ -66,8 +66,8 @@ def get_expired_events():
 def create_event(user_data):
     """Creates event from data passed by user"""
 
-    expiration_date = datetime.datetime.strptime(user_data["expiration_time"], "%d-%m-%y")
-    notification_date = datetime.datetime.strptime(user_data["notification_time"], "%d-%m-%y")
+    expiration_date = datetime.datetime.strptime(user_data["expiration_date"], "%d-%m-%y")
+    notification_date = datetime.datetime.strptime(user_data["notification_date"], "%d-%m-%y")
 
     current_user_id = User.get(user_id=user_data["user_id"]).id
     Event.create(
