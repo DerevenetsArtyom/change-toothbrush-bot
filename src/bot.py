@@ -10,18 +10,11 @@ from models import create_tables
 
 load_dotenv()
 
-"""
-It should look like:
-
-1. Add topic/subject of notification
-2. Add expiration date - when event should expire and you should be notified
-3. Add intermediate notification date (optional) - when user should be notified first time and take some action
-4. Confirmation! (user should verify and approve collected data from his input)
-"""
-
 
 def main():
     telegram_token = os.getenv("TELEGRAM_TOKEN")
+    if telegram_token is None:
+        raise Exception("Please setup the .env variable TELEGRAM_TOKEN.")
 
     # create the updater, that will automatically create also a dispatcher and a queue to make them dialog
     updater = Updater(telegram_token)
