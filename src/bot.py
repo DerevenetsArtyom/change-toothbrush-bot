@@ -14,18 +14,39 @@ def main():
     if telegram_token is None:
         raise Exception("Please setup the .env variable TELEGRAM_TOKEN.")
 
+    PORT = int(os.getenv("PORT", "8443"))
+    HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
+
     # create the updater, that will automatically create also a dispatcher and a queue to make them dialog
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
 
     setup_dispatcher(dispatcher)
 
-    # Start the Bot
-    updater.start_polling()
+    if HEROKU_APP_NAME is None:  # pooling mode, local development
+        print("Can't detect 'HEROKU_APP_NAME' env. Running bot in pooling mode.")
+        print("Note: this is not a great way to deploy the bot in Heroku.")
 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM or SIGABRT.
-    # This should be used most of the time, since start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+        # Start the Bot
+        updater.start_polling()
+
+        # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM or SIGABRT.
+        # This should be used most of the time, since start_polling() is non-blocking and will stop the bot gracefully.
+        updater.idle()
+
+    else:  # webhook mode, production-like Heroku setup
+        print(
+            f"Running bot in webhook mode. Make sure that this url is correct: https://{HEROKU_APP_NAME}.herokuapp.com/"
+        )
+        updater.start_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/"
+            # url_path=TELEGRAM_TOKEN,
+            # webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/{TELEGRAM_TOKEN}"
+        )
+
+        updater.idle()
 
 
 if __name__ == "__main__":
