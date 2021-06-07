@@ -42,8 +42,12 @@ class Event(pw.Model):
         database = database
 
 
-def get_pending_events():
+def get_pending_events(user_id):
     """Returns all pending events (that are waiting its notification time)."""
+
+    current_user_id = User.get(user_id=user_id).id
+    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
+    return user_events
 
 
 def get_expired_events():

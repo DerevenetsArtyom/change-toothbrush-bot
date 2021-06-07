@@ -8,7 +8,7 @@ from telegram.ext import (
     MessageHandler,
 )
 
-from models import Event, User, create_event
+from models import Event, User, create_event, get_pending_events
 from utils import error_logger, logger
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
@@ -106,8 +106,7 @@ def show_pending(update: Update, context: CallbackContext) -> None:
     User should be able to request from bot all his pending events (that are waiting its notification time).
     """
 
-    current_user_id = User.get(user_id=update.effective_user.id).id
-    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
+    user_events = get_pending_events(update.effective_user.id)
 
     if user_events.count() == 0:
         update.message.reply_text("You don't have entries yet (")

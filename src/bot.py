@@ -1,9 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from telegram.ext import (
-    Updater,
-)
+from telegram.ext import Updater
 
 from handlers import setup_dispatcher
 from models import create_tables
