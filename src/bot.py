@@ -1,12 +1,19 @@
 import os
+from datetime import time
 
+import pytz
 from dotenv import load_dotenv
-from telegram.ext import Updater
+from telegram.ext import CallbackContext, Updater
 
 from handlers import setup_dispatcher
 from models import create_tables
 
 load_dotenv()
+
+
+def check_database(context: CallbackContext):
+    chat_id = "348029891"
+    context.bot.send_message(chat_id=chat_id, text="JOB EXECUTED!!!")
 
 
 def main():
@@ -20,6 +27,9 @@ def main():
     # create the updater, that will automatically create also a dispatcher and a queue to make them dialog
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
+    job_queue = updater.job_queue
+
+    job_queue.run_daily(check_database, time(hour=9, tzinfo=pytz.timezone("Europe/Kiev")))
 
     setup_dispatcher(dispatcher)
 
