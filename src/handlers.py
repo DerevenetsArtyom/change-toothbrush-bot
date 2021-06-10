@@ -14,6 +14,18 @@ from utils import error_logger, logger
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
 
 
+def get_description():
+    return """
+/help - Show help
+/add - Start the process of adding a new event
+/list - Show all pending events
+"""
+
+
+def help_handler(update: Update, _: CallbackContext):
+    update.message.reply_text(f"Supported commands:\n{get_description()}")
+
+
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
 
@@ -34,7 +46,7 @@ def start(update: Update, context: CallbackContext) -> None:
     # Save "user_id" for future linking with new event
     context.user_data["user_id"] = current_user.id
 
-    update.message.reply_text("The available commands for now: /add")
+    update.message.reply_text(f"The available commands for now:\n{get_description()}")
 
 
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
@@ -165,6 +177,7 @@ def cancel(update: Update, _: CallbackContext) -> int:
 
 def setup_dispatcher(dispatcher):
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("help", help_handler))
     dispatcher.add_handler(CommandHandler("list", show_pending))
     # dispatcher.add_handler(CommandHandler("list_old", show_archived))
 
