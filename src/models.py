@@ -46,12 +46,14 @@ def get_pending_events(user_id):
     """Returns all pending events (that are waiting its notification time)."""
 
     current_user_id = User.get(user_id=user_id).id
-    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
-    return user_events
+    return Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
 
 
-def get_expired_events():
+def get_expired_events(user_id):
     """Returns all archived / expires events (that have been completed already)."""
+
+    current_user_id = User.get(user_id=user_id).id
+    return Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
 
 
 def create_event(user_data):
