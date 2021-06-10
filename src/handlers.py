@@ -14,7 +14,7 @@ from utils import error_logger, logger
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
 
 
-def get_description():
+def get_description() -> str:
     return """
 /help - Show help
 /add - Start the process of adding a new event
@@ -22,7 +22,7 @@ def get_description():
 """
 
 
-def help_handler(update: Update, _: CallbackContext):
+def help_handler(update: Update, _: CallbackContext) -> None:
     update.message.reply_text(f"Supported commands:\n{get_description()}")
 
 
@@ -148,7 +148,6 @@ def show_expired(update: Update, _: CallbackContext) -> None:
 
     update.message.reply_text("All entries you had before:")
     for event in user_events:
-
         update.message.reply_text(
             text=f"Subject: {event.subject}\n"
             f"Expiration date: {event.expiration_date}\n"
@@ -156,7 +155,7 @@ def show_expired(update: Update, _: CallbackContext) -> None:
         )
 
 
-def complete_event_handler(update: Update, context: CallbackContext) -> None:
+def complete_event_handler(update: Update, _: CallbackContext) -> None:
     query = update.callback_query
 
     query.answer()
@@ -173,7 +172,7 @@ def complete_event_handler(update: Update, context: CallbackContext) -> None:
     query.message.reply_text(f"Event '{event.subject}' was completed and archived! ")
 
 
-def show_archived(update: Update, context: CallbackContext) -> None:
+def show_archived(update: Update, _: CallbackContext) -> None:
     """
     User should be able to request from bot all his archived events (it's "completed" events actually).
 
