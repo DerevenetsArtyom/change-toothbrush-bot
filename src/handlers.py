@@ -8,7 +8,7 @@ from telegram.ext import (
     MessageHandler,
 )
 
-from models import Event, User, create_event, get_pending_events
+from models import Event, User, create_event, get_expired_events, get_pending_events
 from utils import error_logger, logger
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
@@ -113,10 +113,8 @@ def confirmation(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-def show_pending(update: Update, context: CallbackContext) -> None:
-    """
-    User should be able to request from bot all his pending events (that are waiting its notification time).
-    """
+def show_pending(update: Update, _: CallbackContext) -> None:
+    """User should be able to request from bot all his pending events (that are waiting its notification time)."""
 
     user_events = get_pending_events(update.effective_user.id)
 
@@ -137,6 +135,25 @@ def show_pending(update: Update, context: CallbackContext) -> None:
         )
 
     update.message.reply_text("After taking some actions, don't forget to call /list again!")
+
+
+def show_expired(update: Update, _: CallbackContext) -> None:
+    """User should be able to request from bot all his expired events. Together with pending events - it's all events"""
+
+    user_events = get_expired_events(update.effective_user.id)
+
+    if user_events.count() == 0:
+        update.message.reply_text("You don't have entries yet (")
+        return
+
+    update.message.reply_text("All entries you had before:")
+    for event in user_events:
+
+        update.message.reply_text(
+            text=f"Subject: {event.subject}\n"
+            f"Expiration date: {event.expiration_date}\n"
+            f"Notification date: {event.notification_date}\n",
+        )
 
 
 def complete_event_handler(update: Update, context: CallbackContext) -> None:
@@ -179,7 +196,7 @@ def setup_dispatcher(dispatcher):
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_handler))
     dispatcher.add_handler(CommandHandler("list", show_pending))
-    # dispatcher.add_handler(CommandHandler("list_old", show_archived))
+    dispatcher.add_handler(CommandHandler("list_expired", show_expired))
 
     dispatcher.add_handler(CallbackQueryHandler(complete_event_handler))
 
