@@ -19,6 +19,7 @@ def get_description() -> str:
 /help - Show help
 /add - Start the process of adding a new event
 /list - Show all pending events
+/list_expired - Show all expired events
 """
 
 
