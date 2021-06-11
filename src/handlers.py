@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, Update
 from telegram.ext import (
     CallbackContext,
     CallbackQueryHandler,
@@ -47,7 +47,13 @@ def start(update: Update, context: CallbackContext) -> None:
     # Save "user_id" for future linking with new event
     context.user_data["user_id"] = current_user.id
 
-    update.message.reply_text(f"The available commands for now:\n{get_description()}")
+    reply_keyboard = [
+        ["/add", "/list"],
+        ["/list_expired", "/help"],
+    ]
+
+    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
+    update.message.reply_text(f"The available commands for now:\n{get_description()}", reply_markup=markup)
 
 
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
