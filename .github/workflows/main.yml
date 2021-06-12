@@ -1,4 +1,4 @@
-name: Run all available linters
+name: Check and release
 
 on: 
   pull_request: {}
