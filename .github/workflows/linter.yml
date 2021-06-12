@@ -7,10 +7,11 @@ on:
     tags: "*"
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Setup Python
         uses: actions/setup-python@v1
@@ -33,3 +34,19 @@ jobs:
       - name: Run Isort
         run: |
           isort src/
+
+  deploy:
+    # If the lint job does not pass,the deploy job will not even be executed
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploying to Heroku
+        # More details available at: https://github.com/marketplace/actions/deploy-to-heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_PROJECT_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL_ADSRESS }}
