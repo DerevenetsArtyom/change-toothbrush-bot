@@ -1,4 +1,4 @@
-name: Test
+name: Run all available linters
 
 on: 
   pull_request: {}
@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Black
+      - name: Run Black
         run: |
           black --line-length 120 src/
 
@@ -30,18 +30,6 @@ jobs:
         run: |
           flake8 src/
 
-      - name: Isort
+      - name: Run Isort
         run: |
           isort src/
-
-#  docker-image:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Build docker image
-#        run: docker build . -t {{cookiecutter.repo_name}}:test
-#
-#      - name: Smoke test docker image
-#        run: |
-#          docker run --rm {{cookiecutter.repo_name}}:test 10
