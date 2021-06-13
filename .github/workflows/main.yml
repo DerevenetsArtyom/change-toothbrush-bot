@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Black
         run: |
-          black --line-length 120 src/
+          black --line-length 120 src/ --check
 
       - name: Lint with flake8
         run: |
