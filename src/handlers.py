@@ -71,7 +71,17 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     context.user_data["entry"] = user_text
 
-    update.message.reply_text(f"You've added an entry - '{user_text}'! Now add expiration date")
+    keyboard = [
+        [InlineKeyboardButton(text="In a week!", callback_data=f"expiration_date:week")],
+        [InlineKeyboardButton(text="In a month!", callback_data=f"expiration_date:month")],
+        [InlineKeyboardButton(text="In a 3 month!", callback_data=f"expiration_date:3month")],
+    ]
+
+    markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text(
+        f"You've added an entry - '{user_text}'!\n"
+        f"Now select from list or add expiration date manually", reply_markup=markup
+    )
 
     return EXPIRATION_DATE
 
@@ -83,6 +93,22 @@ def expiration_date(update: Update, context: CallbackContext) -> int:
     context.user_data["expiration_date"] = update.message.text
 
     update.message.reply_text("You've added expiration time! Now add notification time")
+
+    return NOTIFICATION_DATE
+
+
+def add_expiration_date_from_choice(update: Update, _: CallbackContext) -> None:
+    query = update.callback_query
+
+    query.answer()
+
+    if ":" not in query.data:
+        query.message.reply_text("Something went wrong. Don't know your choice")
+        return
+
+    # TODO: calculate expiration date based on user choice and put it to context.user_data["expiration_date"] here
+
+    query.message.reply_text("You've added expiration time! Now add notification time!")
 
     return NOTIFICATION_DATE
 
@@ -210,7 +236,10 @@ def setup_dispatcher(dispatcher):
         entry_points=[CommandHandler("add", start_creating_entry)],
         states={
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
-            EXPIRATION_DATE: [MessageHandler(Filters.text, expiration_date)],
+            EXPIRATION_DATE: [
+                MessageHandler(Filters.text, expiration_date),
+                CallbackQueryHandler(add_expiration_date_from_choice, pattern="^expiration_date"),
+            ],
             NOTIFICATION_DATE: [MessageHandler(Filters.text, notification_date)],
             CONFIRMATION: [CommandHandler("done", confirmation)],
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
