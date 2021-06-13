@@ -230,7 +230,7 @@ def setup_dispatcher(dispatcher):
     dispatcher.add_handler(CommandHandler("list", show_pending))
     dispatcher.add_handler(CommandHandler("list_expired", show_expired))
 
-    dispatcher.add_handler(CallbackQueryHandler(complete_event_handler))
+    dispatcher.add_handler(CallbackQueryHandler(complete_event_handler, pattern="^event"))
 
     conversation_handler = ConversationHandler(
         entry_points=[CommandHandler("add", start_creating_entry)],
