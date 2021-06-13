@@ -72,15 +72,15 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
     context.user_data["entry"] = user_text
 
     keyboard = [
-        [InlineKeyboardButton(text="In a week!", callback_data=f"expiration_date:week")],
-        [InlineKeyboardButton(text="In a month!", callback_data=f"expiration_date:month")],
-        [InlineKeyboardButton(text="In a 3 month!", callback_data=f"expiration_date:3month")],
+        [InlineKeyboardButton(text="In a week!", callback_data="expiration_date:week")],
+        [InlineKeyboardButton(text="In a month!", callback_data="expiration_date:month")],
+        [InlineKeyboardButton(text="In a 3 month!", callback_data="expiration_date:3month")],
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        f"You've added an entry - '{user_text}'!\n"
-        f"Now select from list or add expiration date manually", reply_markup=markup
+        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually",
+        reply_markup=markup,
     )
 
     return EXPIRATION_DATE
