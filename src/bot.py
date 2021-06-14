@@ -5,7 +5,7 @@ import pytz
 from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
-from handlers import setup_dispatcher
+from handlers.main import setup_dispatcher
 from models import create_tables
 
 load_dotenv()
