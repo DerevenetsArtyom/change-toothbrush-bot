@@ -9,18 +9,9 @@ from telegram.ext import (
 )
 
 from models import Event, User, create_event, get_expired_events, get_pending_events
-from utils import error_logger, logger
+from utils import error_logger, get_description, logger
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
-
-
-def get_description() -> str:
-    return """
-/help - Show help
-/add - Start the process of adding a new event
-/list - Show all pending events
-/list_expired - Show all expired events
-"""
 
 
 def help_handler(update: Update, _: CallbackContext) -> None:
@@ -96,7 +87,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 #############################
 
 
-def expiration_date(update: Update, context: CallbackContext) -> int:
+def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
@@ -144,7 +135,7 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 ###############################
 
 
-def notification_date(update: Update, context: CallbackContext) -> int:
+def add_notification_date_custom(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
@@ -287,11 +278,11 @@ def setup_dispatcher(dispatcher):
         states={
             SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
             EXPIRATION_DATE: [
-                MessageHandler(Filters.text, expiration_date),
+                MessageHandler(Filters.text, add_expiration_date_custom),
                 CallbackQueryHandler(add_expiration_date_from_choice, pattern="^expiration_date"),
             ],
             NOTIFICATION_DATE: [
-                MessageHandler(Filters.text, notification_date),
+                MessageHandler(Filters.text, add_notification_date_custom),
                 CallbackQueryHandler(add_notification_date_from_choice, pattern="^notification_date"),
             ],
             CONFIRMATION: [CommandHandler("done", confirmation)],
