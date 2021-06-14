@@ -90,6 +90,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     return EXPIRATION_DATE
 
+
 #############################
 # EXPIRATION_DATE step (№2) #
 #############################
@@ -101,12 +102,19 @@ def expiration_date(update: Update, context: CallbackContext) -> int:
 
     context.user_data["expiration_date"] = update.message.text
 
-    update.message.reply_text("You've added expiration time! Now add notification time")
+    keyboard = [
+        [InlineKeyboardButton(text="a week beforehand!", callback_data="notification_date:week")],
+        [InlineKeyboardButton(text="a month beforehand!", callback_data="notification_date:month")],
+        [InlineKeyboardButton(text="a 3 month beforehand!", callback_data="notification_date:3month")],
+    ]
+
+    markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text("You've added expiration time! Now add notification time!", reply_markup=markup)
 
     return NOTIFICATION_DATE
 
 
-def add_expiration_date_from_choice(update: Update, _: CallbackContext) -> None:
+def add_expiration_date_from_choice(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     query.answer()
 
@@ -116,9 +124,20 @@ def add_expiration_date_from_choice(update: Update, _: CallbackContext) -> None:
 
     # TODO: calculate expiration date based on user choice and put it to context.user_data["expiration_date"] here
 
-    query.message.reply_text("You've added expiration time! Now add notification time!")
+    context.user_data["expiration_date"] = query.data.split(":")[-1]
+
+    # TODO: this code snippet duplicates the one in 'expiration_date' ('update' -> 'query')
+    keyboard = [
+        [InlineKeyboardButton(text="a week beforehand!", callback_data="notification_date:week")],
+        [InlineKeyboardButton(text="a month beforehand!", callback_data="notification_date:month")],
+        [InlineKeyboardButton(text="a 3 month beforehand!", callback_data="notification_date:3month")],
+    ]
+
+    markup = InlineKeyboardMarkup(keyboard)
+    query.message.reply_text("You've added expiration time! Now add notification time!", reply_markup=markup)
 
     return NOTIFICATION_DATE
+
 
 ###############################
 # NOTIFICATION_DATE step (№3) #
@@ -143,6 +162,31 @@ def notification_date(update: Update, context: CallbackContext) -> int:
     )
 
     return CONFIRMATION
+
+
+def add_notification_date_from_choice(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    query.answer()
+
+    if ":" not in query.data:
+        query.message.reply_text("Something went wrong. Don't know your choice")
+        return
+
+    # TODO: calculate notification date based on user choice and put it to context.user_data["notification_date"] here
+    context.user_data["notification_date"] = query.data.split(":")[-1]
+
+    # TODO: this code snippet duplicates the one in 'notification_date' ('update' -> 'query')
+    query.message.reply_text(
+        f"You've added notification time! Confirm tha data below:\n\n"
+        f'Subject - "{context.user_data["entry"]}"\n'
+        f'Expiration time - "{context.user_data["expiration_date"]}"\n'
+        f'Notification time - "{context.user_data["notification_date"]}"\n\n'
+        f"If everything is correct, please enter /done command. "
+        f"If not, enter /cancel command."
+    )
+
+    return CONFIRMATION
+
 
 ##########################
 # CONFIRMATION step (№4) #
@@ -246,7 +290,10 @@ def setup_dispatcher(dispatcher):
                 MessageHandler(Filters.text, expiration_date),
                 CallbackQueryHandler(add_expiration_date_from_choice, pattern="^expiration_date"),
             ],
-            NOTIFICATION_DATE: [MessageHandler(Filters.text, notification_date)],
+            NOTIFICATION_DATE: [
+                MessageHandler(Filters.text, notification_date),
+                CallbackQueryHandler(add_notification_date_from_choice, pattern="^notification_date"),
+            ],
             CONFIRMATION: [CommandHandler("done", confirmation)],
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
             # PHOTO: [
