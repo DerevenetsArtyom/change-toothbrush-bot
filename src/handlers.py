@@ -56,6 +56,11 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(f"The available commands for now:\n{get_description()}", reply_markup=markup)
 
 
+#####################
+# SUBJECT step (№1) #
+#####################
+
+
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
     update.message.reply_text("Enter subject / entry below")
 
@@ -85,6 +90,10 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     return EXPIRATION_DATE
 
+#############################
+# EXPIRATION_DATE step (№2) #
+#############################
+
 
 def expiration_date(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
@@ -99,7 +108,6 @@ def expiration_date(update: Update, context: CallbackContext) -> int:
 
 def add_expiration_date_from_choice(update: Update, _: CallbackContext) -> None:
     query = update.callback_query
-
     query.answer()
 
     if ":" not in query.data:
@@ -111,6 +119,10 @@ def add_expiration_date_from_choice(update: Update, _: CallbackContext) -> None:
     query.message.reply_text("You've added expiration time! Now add notification time!")
 
     return NOTIFICATION_DATE
+
+###############################
+# NOTIFICATION_DATE step (№3) #
+###############################
 
 
 def notification_date(update: Update, context: CallbackContext) -> int:
@@ -131,6 +143,10 @@ def notification_date(update: Update, context: CallbackContext) -> int:
     )
 
     return CONFIRMATION
+
+##########################
+# CONFIRMATION step (№4) #
+##########################
 
 
 def confirmation(update: Update, context: CallbackContext) -> int:
@@ -190,7 +206,6 @@ def show_expired(update: Update, _: CallbackContext) -> None:
 
 def complete_event_handler(update: Update, _: CallbackContext) -> None:
     query = update.callback_query
-
     query.answer()
 
     if ":" not in query.data:
@@ -203,15 +218,6 @@ def complete_event_handler(update: Update, _: CallbackContext) -> None:
     event.save()
 
     query.message.reply_text(f"Event '{event.subject}' was completed and archived! ")
-
-
-def show_archived(update: Update, _: CallbackContext) -> None:
-    """
-    User should be able to request from bot all his archived events (it's "completed" events actually).
-
-    """
-
-    update.message.reply_text("Soon we'll show you all your archived entries")
 
 
 def cancel(update: Update, _: CallbackContext) -> int:
