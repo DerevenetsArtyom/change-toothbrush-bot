@@ -75,7 +75,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually",
+        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually:",
         reply_markup=markup,
     )
 
@@ -94,13 +94,15 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     context.user_data["expiration_date"] = update.message.text
 
     keyboard = [
-        [InlineKeyboardButton(text="a week beforehand!", callback_data="notification_date:week")],
-        [InlineKeyboardButton(text="a month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="a 3 month beforehand!", callback_data="notification_date:3month")],
+        [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
+        [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
+        [InlineKeyboardButton(text="3 month beforehand!", callback_data="notification_date:3month")],
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text("You've added expiration time! Now add notification time!", reply_markup=markup)
+    update.message.reply_text(
+        "You've added expiration time!\n" "Now select from list or add notification time manually:", reply_markup=markup
+    )
 
     return NOTIFICATION_DATE
 
@@ -119,13 +121,15 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     # TODO: this code snippet duplicates the one in 'expiration_date' ('update' -> 'query')
     keyboard = [
-        [InlineKeyboardButton(text="a week beforehand!", callback_data="notification_date:week")],
-        [InlineKeyboardButton(text="a month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="a 3 month beforehand!", callback_data="notification_date:3month")],
+        [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
+        [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
+        [InlineKeyboardButton(text="3 month beforehand!", callback_data="notification_date:3month")],
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
-    query.message.reply_text("You've added expiration time! Now add notification time!", reply_markup=markup)
+    query.message.reply_text(
+        "You've added expiration time! \nNow select from list or add notification time manually:", reply_markup=markup
+    )
 
     return NOTIFICATION_DATE
 
