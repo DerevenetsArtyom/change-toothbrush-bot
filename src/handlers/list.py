@@ -4,6 +4,12 @@ from telegram.ext import CallbackContext
 from models import Event, get_expired_events, get_pending_events
 
 
+def prettify_date(date_object) -> str:
+    """Format datetime object to human-friendly format"""
+
+    return date_object.strftime("%d %B %Y")
+
+
 def show_pending(update: Update, _: CallbackContext) -> None:
     """User should be able to request from bot all his pending events (that are waiting its notification time)."""
 
@@ -20,8 +26,8 @@ def show_pending(update: Update, _: CallbackContext) -> None:
 
         update.message.reply_text(
             text=f"Subject: {event.subject}\n"
-            f"Expiration date: {event.expiration_date}\n"
-            f"Notification date: {event.notification_date}\n",
+            f"Notification date: {prettify_date(event.notification_date)}\n"
+            f"Expiration date: {prettify_date(event.expiration_date)}\n",
             reply_markup=reply_markup,
         )
 
@@ -41,8 +47,8 @@ def show_expired(update: Update, _: CallbackContext) -> None:
     for event in user_events:
         update.message.reply_text(
             text=f"Subject: {event.subject}\n"
-            f"Expiration date: {event.expiration_date}\n"
-            f"Notification date: {event.notification_date}\n",
+            f"Notification date: {prettify_date(event.notification_date)}\n"
+            f"Expiration date: {prettify_date(event.expiration_date)}\n",
         )
 
 
