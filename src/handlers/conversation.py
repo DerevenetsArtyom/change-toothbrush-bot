@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext, ConversationHandler
 
@@ -56,7 +58,7 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     keyboard = [
         [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
         [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="3 month beforehand!", callback_data="notification_date:3month")],
+        [InlineKeyboardButton(text="3 months beforehand!", callback_data="notification_date:3month")],
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
@@ -75,15 +77,24 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
         query.message.reply_text("Something went wrong. Don't know your choice")
         return
 
-    # TODO: calculate expiration date based on user choice and put it to context.user_data["expiration_date"] here
+    desired_time_period = query.data.split(":")[-1]
+    expiration_date = None
+    now = datetime.now().date()
 
-    context.user_data["expiration_date"] = query.data.split(":")[-1]
+    if desired_time_period == "week":
+        expiration_date = now + timedelta(weeks=1)
+    elif desired_time_period == "month":
+        expiration_date = now + timedelta(days=30)
+    elif desired_time_period == "3month":
+        expiration_date = now + timedelta(days=92)
+
+    context.user_data["expiration_date"] = expiration_date
 
     # TODO: this code snippet duplicates the one in 'expiration_date' ('update' -> 'query')
     keyboard = [
         [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
         [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="3 month beforehand!", callback_data="notification_date:3month")],
+        [InlineKeyboardButton(text="3 months beforehand!", callback_data="notification_date:3month")],
     ]
 
     markup = InlineKeyboardMarkup(keyboard)
