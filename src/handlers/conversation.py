@@ -78,6 +78,7 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
         return
 
     desired_time_period = query.data.split(":")[-1]
+
     expiration_date = None
     now = datetime.now().date()
 
@@ -138,8 +139,19 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
         query.message.reply_text("Something went wrong. Don't know your choice")
         return
 
-    # TODO: calculate notification date based on user choice and put it to context.user_data["notification_date"] here
-    context.user_data["notification_date"] = query.data.split(":")[-1]
+    desired_time_period = query.data.split(":")[-1]
+
+    expiration_date = context.user_data["expiration_date"]
+    notification_date = None
+
+    if desired_time_period == "week":
+        notification_date = expiration_date - timedelta(weeks=1)
+    elif desired_time_period == "month":
+        notification_date = expiration_date - timedelta(days=30)
+    elif desired_time_period == "3month":
+        notification_date = expiration_date - timedelta(days=92)
+
+    context.user_data["notification_date"] = notification_date
 
     # TODO: this code snippet duplicates the one in 'notification_date' ('update' -> 'query')
     query.message.reply_text(
