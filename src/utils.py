@@ -19,3 +19,9 @@ def get_description() -> str:
 /list - Show all pending events
 /list_expired - Show all expired events
 """
+
+
+def prettify_date(date_object) -> str:
+    """Format datetime object to human-friendly format"""
+
+    return date_object.strftime("%d %B %Y")

@@ -2,12 +2,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
 from models import Event, get_expired_events, get_pending_events
-
-
-def prettify_date(date_object) -> str:
-    """Format datetime object to human-friendly format"""
-
-    return date_object.strftime("%d %B %Y")
+from utils import prettify_date
 
 
 def show_pending(update: Update, _: CallbackContext) -> None:

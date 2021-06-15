@@ -4,7 +4,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext, ConversationHandler
 
 from models import create_event
-from utils import logger
+from utils import logger, prettify_date
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
 
@@ -53,7 +53,8 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    context.user_data["expiration_date"] = update.message.text
+    # TODO: add validation for date to be in the future only
+    context.user_data["expiration_date"] = datetime.strptime(update.message.text, "%d-%m-%Y").date()
 
     keyboard = [
         [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
@@ -117,15 +118,14 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
-    context.user_data["notification_date"] = update.message.text
-
-    logger.info("context.user_data after %s", context.user_data)
+    # TODO: add validation for date to be in the future only and SHOULD BE BEFORE EXPIRATION DATE
+    context.user_data["notification_date"] = datetime.strptime(update.message.text, "%d-%m-%Y").date()
 
     update.message.reply_text(
         f"You've added notification time! Confirm tha data below:\n\n"
         f'Subject - "{context.user_data["entry"]}"\n'
-        f'Expiration time - "{context.user_data["expiration_date"]}"\n'
-        f'Notification time - "{context.user_data["notification_date"]}"\n\n'
+        f'Notification time - "{prettify_date(context.user_data["notification_date"])}"\n'
+        f'Expiration time - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
         f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command."
     )
