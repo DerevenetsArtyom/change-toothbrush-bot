@@ -37,7 +37,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually:",
+        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually (%d-%m-%Y):",
         reply_markup=markup,
     )
 
@@ -63,7 +63,8 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        "You've added expiration time!\n" "Now select from list or add notification time manually:", reply_markup=markup
+        "You've added expiration time!\n" "Now select from list or add notification time manually (%d-%m-%Y):",
+        reply_markup=markup,
     )
 
     return NOTIFICATION_DATE
@@ -100,7 +101,8 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     markup = InlineKeyboardMarkup(keyboard)
     query.message.reply_text(
-        "You've added expiration time! \nNow select from list or add notification time manually:", reply_markup=markup
+        "You've added expiration time! \nNow select from list or add notification time manually (%d-%m-%Y):",
+        reply_markup=markup,
     )
 
     return NOTIFICATION_DATE

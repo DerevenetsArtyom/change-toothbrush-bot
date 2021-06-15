@@ -56,11 +56,17 @@ def get_expired_events(user_id):
     return Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
 
 
-def create_event(user_data):
+def create_event(user_data: dict) -> None:
     """Creates event from data passed by user"""
 
-    expiration_date = datetime.datetime.strptime(user_data["expiration_date"], "%d-%m-%y")
-    notification_date = datetime.datetime.strptime(user_data["notification_date"], "%d-%m-%y")
+    expiration_date = user_data["expiration_date"]
+    notification_date = user_data["notification_date"]
+
+    if isinstance(expiration_date, str):
+        expiration_date = datetime.datetime.strptime(expiration_date, "%d-%m-%Y")
+
+    if isinstance(notification_date, str):
+        notification_date = datetime.datetime.strptime(notification_date, "%d-%m-%Y")
 
     current_user_id = User.get(user_id=user_data["user_id"]).id
     Event.create(
