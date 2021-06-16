@@ -53,7 +53,7 @@ jobs:
       - name: Run Isort
         run: |
           pip install -r requirements-dev.txt
-          isort src/
+          isort src/ --check
 
   deploy:
     # If the linter job does not pass,the deploy job will not even be executed
