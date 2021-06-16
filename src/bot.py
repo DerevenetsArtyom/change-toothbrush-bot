@@ -1,19 +1,34 @@
 import os
-from datetime import time
+from datetime import datetime, time
 
 import pytz
 from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
 from handlers.main import setup_dispatcher
-from models import create_tables
+from models import Event, User, create_tables
+from utils import prettify_date
 
 load_dotenv()
 
 
 def check_database(context: CallbackContext):
-    chat_id = "348029891"
-    context.bot.send_message(chat_id=chat_id, text="JOB EXECUTED!!!")
+    # chat_id = "348029891"
+    # context.bot.send_message(chat_id=chat_id, text="JOB EXECUTED!!!")
+
+    today = datetime.now().date()
+
+    for user in User.select():
+        today_events = user.events.select().where(Event.notification_date == today)
+
+        for event in today_events:
+            context.bot.send_message(
+                chat_id=user.chat_id,
+                text=f"You wanted me to notify you about today:"
+                f"Subject: {event.subject}\n"
+                f"Notification date: {prettify_date(event.notification_date)}\n"
+                f"Expiration date: {prettify_date(event.expiration_date)}\n",
+            )
 
 
 def main():
