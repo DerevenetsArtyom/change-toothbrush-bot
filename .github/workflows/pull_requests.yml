@@ -1,0 +1,55 @@
+name: Check for Pull Requests only
+
+on: 
+  pull_request:
+    branches: master
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Run Black
+        run: |
+          pip install -r requirements-dev.txt
+          black --line-length 120 src/ --check
+
+  flake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Lint with flake8
+        run: |
+          pip install -r requirements-dev.txt
+          flake8 src/
+
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Run Isort
+        run: |
+          pip install -r requirements-dev.txt
+          isort src/ --check
+  
