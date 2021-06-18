@@ -17,11 +17,15 @@ def check_database(context: CallbackContext):
     # context.bot.send_message(chat_id=chat_id, text="JOB EXECUTED!!!")
 
     today = datetime.now().date()
+    print("today", today)
 
     for user in User.select():
+        print("user", user.id)
         today_events = user.events.select().where(Event.notification_date == today)
+        print("today_events", today_events.count())
 
         for event in today_events:
+            print("event", event.id)
             context.bot.send_message(
                 chat_id=user.chat_id,
                 text=f"You wanted me to notify you about today:"
