@@ -9,12 +9,12 @@ def help_handler(update: Update, _: CallbackContext) -> None:
     update.message.reply_text(f"Supported commands:\n{get_description()}")
 
 
-def cancel(update: Update, _: CallbackContext) -> int:
+def cancel(update: Update, context: CallbackContext) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text("Bye! I hope we can talk again some day.")
+    update.message.reply_text("The data you've entered previously is gone. Start again!")
 
-    # TODO: flush "context.user_data" is user canceled the thing
+    context.user_data.clear()
 
     return ConversationHandler.END
 
