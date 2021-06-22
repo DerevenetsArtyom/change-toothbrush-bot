@@ -6,30 +6,53 @@ from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
 from handlers.main import setup_dispatcher
-from models import Event, User, create_tables
+from models import Event, User, create_tables, complete_event
 from utils import prettify_date
 
 load_dotenv()
 
 
-def check_database(context: CallbackContext):
+def check_events_for_notification(context: CallbackContext):
     today_date = datetime.now().date()
     print("today_date", today_date)
 
     for user in User.select():
         print("user", user.id)
-        today_events = user.events.select().where(Event.notification_date == today_date)
-        print("today_events", today_events.count())
+        today_events_to_notify = user.events.select().where(Event.notification_date == today_date)
+        print("today_events", today_events_to_notify.count())
 
-        for event in today_events:
+        for event in today_events_to_notify:
             print("event", event.id)
             context.bot.send_message(
                 chat_id=user.chat_id,
-                text=f"You wanted me to notify you about today:"
+                text=f"You wanted me to notify you about:"
                 f"Subject: {event.subject}\n"
                 f"Notification date: {prettify_date(event.notification_date)}\n"
                 f"Expiration date: {prettify_date(event.expiration_date)}\n",
             )
+
+
+def check_events_for_expiration(context: CallbackContext):
+    today_date = datetime.now().date()
+    print("today_date", today_date)
+
+    for user in User.select():
+        print("user", user.id)
+        today_events_to_expire = user.events.select().where(Event.expiration_date == today_date)
+        print("today_events expire", today_events_to_expire.count())
+
+        for event in today_events_to_expire:
+            print("event", event.id)
+            context.bot.send_message(
+                chat_id=user.chat_id,
+                text=f"This event is expired today:"
+                f"Subject: {event.subject}\n"
+                f"Expiration date: {prettify_date(event.expiration_date)}\n"
+                f"(you were notified on: {prettify_date(event.notification_date)})\n"
+            )
+
+            complete_event(event.id)
+            print("event was completed", event.id)
 
 
 def main():
@@ -45,7 +68,8 @@ def main():
     dispatcher = updater.dispatcher
     job_queue = updater.job_queue
 
-    job_queue.run_daily(check_database, time(hour=9, tzinfo=pytz.timezone("Europe/Kiev")))
+    job_queue.run_daily(check_events_for_notification, time(hour=9, tzinfo=pytz.timezone("Europe/Kiev")))
+    job_queue.run_daily(check_events_for_expiration, time(hour=9, minute=10, tzinfo=pytz.timezone("Europe/Kiev")))
 
     setup_dispatcher(dispatcher)
 
