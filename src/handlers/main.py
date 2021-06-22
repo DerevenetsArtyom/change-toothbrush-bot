@@ -29,13 +29,13 @@ def setup_dispatcher(dispatcher):
     conversation_handler = ConversationHandler(
         entry_points=[CommandHandler("add", start_creating_entry)],
         states={
-            SUBJECT: [MessageHandler(Filters.text, add_new_entry)],
+            SUBJECT: [MessageHandler(Filters.text & ~Filters.command, add_new_entry)],
             EXPIRATION_DATE: [
-                MessageHandler(Filters.text, add_expiration_date_custom),
+                MessageHandler(Filters.text & ~Filters.command, add_expiration_date_custom),
                 CallbackQueryHandler(add_expiration_date_from_choice, pattern="^expiration_date"),
             ],
             NOTIFICATION_DATE: [
-                MessageHandler(Filters.text, add_notification_date_custom),
+                MessageHandler(Filters.text & ~Filters.command, add_notification_date_custom),
                 CallbackQueryHandler(add_notification_date_from_choice, pattern="^notification_date"),
             ],
             CONFIRMATION: [CommandHandler("done", confirmation)],
@@ -48,7 +48,6 @@ def setup_dispatcher(dispatcher):
             #     MessageHandler(Filters.location, location),
             #     CommandHandler('skip', skip_location),
             # ],
-            # BIO: [MessageHandler(Filters.text & ~Filters.command, bio)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
