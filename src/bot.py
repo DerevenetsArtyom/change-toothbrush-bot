@@ -13,15 +13,12 @@ load_dotenv()
 
 
 def check_database(context: CallbackContext):
-    # chat_id = "348029891"
-    # context.bot.send_message(chat_id=chat_id, text="JOB EXECUTED!!!")
-
-    today = datetime.now().date()
-    print("today", today)
+    today_date = datetime.now().date()
+    print("today_date", today_date)
 
     for user in User.select():
         print("user", user.id)
-        today_events = user.events.select().where(Event.notification_date == today)
+        today_events = user.events.select().where(Event.notification_date == today_date)
         print("today_events", today_events.count())
 
         for event in today_events:
