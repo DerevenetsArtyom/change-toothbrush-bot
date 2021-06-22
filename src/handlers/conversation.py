@@ -64,7 +64,7 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        "You've added an expiration time! \nNow select from list or add notification time manually (%d-%m-%Y):",
+        "You've added an expiration date! \nNow select from list or add notification date manually (%d-%m-%Y):",
         reply_markup=markup,
     )
 
@@ -102,7 +102,7 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     markup = InlineKeyboardMarkup(keyboard)
     query.message.reply_text(
-        "You've added an expiration time! \nNow select from list or add notification time manually (%d-%m-%Y):",
+        "You've added an expiration date! \nNow select from list or add notification date manually (%d-%m-%Y):",
         reply_markup=markup,
     )
 
@@ -124,8 +124,8 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
     update.message.reply_text(
         f"You've added notification date! Confirm the data below:\n\n"
         f'Subject - "{context.user_data["entry"]}"\n'
-        f'Notification time - "{prettify_date(context.user_data["notification_date"])}"\n'
-        f'Expiration time - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
+        f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
+        f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
         f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command and start again."
     )
@@ -159,8 +159,8 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
     query.message.reply_text(
         f"You've added notification date! Confirm the data below:\n\n"
         f'Subject - "{context.user_data["entry"]}"\n'
-        f'Expiration time - "{context.user_data["expiration_date"]}"\n'
-        f'Notification time - "{context.user_data["notification_date"]}"\n\n'
+        f'Expiration date - "{context.user_data["expiration_date"]}"\n'
+        f'Notification date - "{context.user_data["notification_date"]}"\n\n'
         f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command and start again."
     )
