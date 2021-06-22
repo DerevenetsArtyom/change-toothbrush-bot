@@ -71,6 +71,12 @@ def create_event(user_data: dict) -> None:
     )
 
 
+def complete_event(event_id: int) -> None:
+    event = Event.get(Event.id == event_id)
+    event.completed = True
+    event.save()
+
+
 def create_tables():
     with database:
         database.create_tables([Event, User])

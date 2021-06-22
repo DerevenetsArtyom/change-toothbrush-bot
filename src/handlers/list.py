@@ -1,7 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
-from models import Event, get_expired_events, get_pending_events
+from models import complete_event, get_expired_events, get_pending_events
 from utils import prettify_date
 
 
@@ -56,8 +56,6 @@ def complete_event_handler(update: Update, _: CallbackContext) -> None:
         return
 
     event_id = query.data.split(":")[-1]
-    event = Event.get(Event.id == event_id)
-    event.completed = True
-    event.save()
+    complete_event(event_id)
 
-    query.message.reply_text(f"Event '{event.subject}' was completed and archived! ")
+    query.message.reply_text("Event was completed and archived!")

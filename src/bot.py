@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
 from handlers.main import setup_dispatcher
-from models import Event, User, create_tables, complete_event
+from models import Event, User, complete_event, create_tables
 from utils import prettify_date
 
 load_dotenv()
@@ -48,7 +48,7 @@ def check_events_for_expiration(context: CallbackContext):
                 text=f"This event is expired today:"
                 f"Subject: {event.subject}\n"
                 f"Expiration date: {prettify_date(event.expiration_date)}\n"
-                f"(you were notified on: {prettify_date(event.notification_date)})\n"
+                f"(you were notified on: {prettify_date(event.notification_date)})\n",
             )
 
             complete_event(event.id)
