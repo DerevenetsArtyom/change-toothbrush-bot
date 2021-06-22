@@ -8,6 +8,8 @@ from utils import logger, prettify_date
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
 
+USER_INPUT_DATE_FORMAT = "%d-%m-%Y"
+
 
 #####################
 # SUBJECT step (№1) #
@@ -53,8 +55,13 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
-    # TODO: add validation for date to be in the future only
-    context.user_data["expiration_date"] = datetime.strptime(update.message.text, "%d-%m-%Y").date()
+    try:
+        # TODO: add validation for date to be in the future only
+        context.user_data["expiration_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
+    except ValueError:
+        logger.info("wrong input date format - %s", update.message.text)
+        update.message.reply_text("The date format is wrong. Try again, please. Expected format: 21-12-2021")
+        return EXPIRATION_DATE
 
     keyboard = [
         [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
@@ -118,8 +125,13 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
-    # TODO: add validation for date to be in the future only and SHOULD BE BEFORE EXPIRATION DATE
-    context.user_data["notification_date"] = datetime.strptime(update.message.text, "%d-%m-%Y").date()
+    try:
+        # TODO: add validation for date to be in the future only and SHOULD BE BEFORE EXPIRATION DATE
+        context.user_data["notification_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
+    except ValueError:
+        logger.info("wrong input date format - %s", update.message.text)
+        update.message.reply_text("The date format is wrong. Try again, please. Expected format: 21-12-2021")
+        return NOTIFICATION_DATE
 
     update.message.reply_text(
         f"You've added notification date! Confirm the data below:\n\n"
