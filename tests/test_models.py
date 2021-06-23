@@ -3,23 +3,19 @@ from datetime import datetime, date
 
 
 @pytest.fixture
-def user(models):
+def user(models, mixer):
     return models.User.create(
         user_id=1,
         chat_id=1,
-        first_name="First Name",
-        last_name="Last Name",
-        username="Username",
+        first_name=mixer.faker.first_name(),
+        last_name=mixer.faker.last_name(),
     )
 
 
 def test_create_event(models, user):
-    expiration_date = date(year=2021, month=12, day=1)
-    notification_date = date(year=2021, month=10, day=1)
-
     user_data = {
-        "expiration_date": expiration_date,
-        "notification_date": notification_date,
+        "expiration_date": date(year=2021, month=12, day=1),
+        "notification_date": date(year=2021, month=10, day=1),
         "user_id": user.id,
         "entry": "This is test entry",
     }
@@ -38,3 +34,21 @@ def test_create_event(models, user):
     # Check that event was assigned to correct user
     assert created_event.author.first_name == user.first_name
     assert created_event.author.id == user.id
+
+
+def test_get_expired_events(models, user, mixer):
+    expired_events_amount = 5
+
+    for i in range(expired_events_amount):
+        mixer.blend(models.Event, author=user, subject=mixer.faker.text(35), completed=True)
+
+    assert models.get_expired_events(user.id).count() == expired_events_amount
+
+
+def test_get_pending_events(models, user, mixer):
+    pending_events_amount = 5
+
+    for i in range(pending_events_amount):
+        mixer.blend(models.Event, author=user, subject=mixer.faker.text(35))
+
+    assert models.get_pending_events(user.id).count() == pending_events_amount
