@@ -25,3 +25,9 @@ def models(db):
 
     db.drop_tables(app_models)
     db.close()
+
+
+@pytest.fixture
+def mixer():
+    from mixer.backend.peewee import mixer
+    return mixer
