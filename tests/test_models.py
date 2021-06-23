@@ -1,5 +1,6 @@
+from datetime import date, datetime
+
 import pytest
-from datetime import datetime, date
 
 
 @pytest.fixture
@@ -52,3 +53,17 @@ def test_get_pending_events(models, user, mixer):
         mixer.blend(models.Event, author=user, subject=mixer.faker.text(35))
 
     assert models.get_pending_events(user.id).count() == pending_events_amount
+
+
+def test_complete_event(models, mixer):
+    mixer_event = mixer.blend(models.Event)
+    event = models.Event.get(models.Event.id == mixer_event.id)
+
+    assert event.completed is False  # check that 'completed' after creation is False
+
+    models.complete_event(event.id)
+
+    # Fetch updated Event from DB
+    event = models.Event.get(models.Event.id == mixer_event.id)
+
+    assert event.completed is True
