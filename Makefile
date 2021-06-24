@@ -23,7 +23,7 @@ black:
 	@black --line-length 120 --exclude "\.git|\.github|\env|\examples" .
 
 isort:
-	@isort src/
+	@isort .
 
 flake:
 	@flake8 .

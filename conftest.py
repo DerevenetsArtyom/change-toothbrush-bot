@@ -1,5 +1,5 @@
-import pytest
 import peewee
+import pytest
 
 
 @pytest.fixture
