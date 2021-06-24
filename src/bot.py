@@ -6,23 +6,17 @@ from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
 from handlers.main import setup_dispatcher
-from models import Event, User, complete_event, create_tables
+from models import Event, User, complete_event, create_tables, get_events_for_notification
 from utils import prettify_date
 
 load_dotenv()
 
 
 def check_events_for_notification(context: CallbackContext):
-    today_date = datetime.now().date()
-    print("today_date", today_date)
-
     for user in User.select():
-        print("user", user.id)
-        today_events_to_notify = user.events.select().where(Event.notification_date == today_date)
-        print("today_events", today_events_to_notify.count())
+        today_events_to_notify = get_events_for_notification(user.id)
 
         for event in today_events_to_notify:
-            print("event", event.id)
             context.bot.send_message(
                 chat_id=user.chat_id,
                 text=f"You wanted me to notify you about:"

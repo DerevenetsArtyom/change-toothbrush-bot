@@ -77,6 +77,15 @@ def complete_event(event_id: int) -> None:
     event.save()
 
 
+def get_events_for_notification(user_id: int):
+    """Returns events for which notification should go off today"""
+
+    today_date = datetime.datetime.now().date()
+    user = User.get(user_id=user_id)
+
+    return user.events.select().where(Event.notification_date == today_date, Event.completed == False)  # noqa: E712
+
+
 def create_tables():
     with database:
         database.create_tables([Event, User])

@@ -67,3 +67,12 @@ def test_complete_event(models, mixer):
     event = models.Event.get(models.Event.id == mixer_event.id)
 
     assert event.completed is True
+
+
+def test_get_events_for_notification(models, user, mixer):
+    events_for_notification_amount = 8
+
+    for i in range(events_for_notification_amount):
+        mixer.blend(models.Event, author=user, notification_date=datetime.now().date())
+
+    assert models.get_events_for_notification(user.id).count() == events_for_notification_amount
