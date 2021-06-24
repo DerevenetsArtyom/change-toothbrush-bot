@@ -1,4 +1,4 @@
-name: Check and release
+name: Main workflow
 
 on:
   # Trigger the workflow on push or pull request, but only for the master branch
@@ -58,9 +58,25 @@ jobs:
           pip install -r requirements-dev.txt
           isort . --check
 
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Test with pytest
+        run: |
+          pip install -r requirements.txt
+          pytest tests/
+
   deploy:
     # If the linter job does not pass,the deploy job will not even be executed
-    needs: [black, flake, isort]
+    needs: [black, flake, isort, tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:

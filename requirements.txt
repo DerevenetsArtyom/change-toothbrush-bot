@@ -2,3 +2,7 @@ python-dotenv==0.18.0
 python-telegram-bot==13.6
 peewee==3.14.4
 psycopg2==2.9.1
+pytest==6.2.4
+pytest-mock==3.6.1
+faker==8.8.1
+mixer==7.1.2
