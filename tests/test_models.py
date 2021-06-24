@@ -76,3 +76,12 @@ def test_get_events_for_notification(models, user, mixer):
         mixer.blend(models.Event, author=user, notification_date=datetime.now().date())
 
     assert models.get_events_for_notification(user.id).count() == events_for_notification_amount
+
+
+def test_get_events_for_expiration(models, user, mixer):
+    events_for_expiration_amount = 3
+
+    for i in range(events_for_expiration_amount):
+        mixer.blend(models.Event, author=user, notification_date=datetime.now().date())
+
+    assert models.get_events_for_notification(user.id).count() == events_for_expiration_amount

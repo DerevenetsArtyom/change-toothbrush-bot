@@ -42,6 +42,11 @@ class Event(pw.Model):
         database = database
 
 
+def create_tables():
+    with database:
+        database.create_tables([Event, User])
+
+
 def get_pending_events(user_id):
     """Returns all pending events (that are waiting its notification time)."""
 
@@ -86,6 +91,10 @@ def get_events_for_notification(user_id: int):
     return user.events.select().where(Event.notification_date == today_date, Event.completed == False)  # noqa: E712
 
 
-def create_tables():
-    with database:
-        database.create_tables([Event, User])
+def get_events_for_expiration(user_id: int):
+    """Returns events that expire today"""
+
+    today_date = datetime.datetime.now().date()
+    user = User.get(user_id=user_id)
+
+    return user.events.select().where(Event.expiration_date == today_date, Event.completed == False)  # noqa: E712

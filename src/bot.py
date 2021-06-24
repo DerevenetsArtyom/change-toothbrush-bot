@@ -1,12 +1,12 @@
 import os
-from datetime import datetime, time
+from datetime import time
 
 import pytz
 from dotenv import load_dotenv
 from telegram.ext import CallbackContext, Updater
 
 from handlers.main import setup_dispatcher
-from models import Event, User, complete_event, create_tables, get_events_for_notification
+from models import User, complete_event, create_tables, get_events_for_expiration, get_events_for_notification
 from utils import prettify_date
 
 load_dotenv()
@@ -27,16 +27,10 @@ def check_events_for_notification(context: CallbackContext):
 
 
 def check_events_for_expiration(context: CallbackContext):
-    today_date = datetime.now().date()
-    print("today_date", today_date)
-
     for user in User.select():
-        print("user", user.id)
-        today_events_to_expire = user.events.select().where(Event.expiration_date == today_date)
-        print("today_events expire", today_events_to_expire.count())
+        today_events_to_expire = get_events_for_expiration(user.id)
 
         for event in today_events_to_expire:
-            print("event", event.id)
             context.bot.send_message(
                 chat_id=user.chat_id,
                 text=f"This event is expired today:"
@@ -46,7 +40,6 @@ def check_events_for_expiration(context: CallbackContext):
             )
 
             complete_event(event.id)
-            print("event was completed", event.id)
 
 
 def main():
