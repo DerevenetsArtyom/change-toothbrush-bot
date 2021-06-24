@@ -26,7 +26,7 @@ isort:
 	@isort src/
 
 flake:
-	@flake8 src/
+	@flake8 .
 
 
 lint: black flake isort
