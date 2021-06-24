@@ -4,7 +4,7 @@ import peewee
 
 @pytest.fixture
 def db():
-    return peewee.SqliteDatabase(':memory:')
+    return peewee.SqliteDatabase(":memory:")
 
 
 @pytest.fixture(autouse=True)
@@ -15,6 +15,7 @@ def models(db):
     """
 
     from src import models
+
     app_models = [models.User, models.Event]
 
     db.bind(app_models, bind_refs=False, bind_backrefs=False)
@@ -30,4 +31,5 @@ def models(db):
 @pytest.fixture
 def mixer():
     from mixer.backend.peewee import mixer
+
     return mixer
