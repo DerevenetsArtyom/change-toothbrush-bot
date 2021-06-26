@@ -6,7 +6,7 @@ from utils import prettify_date
 
 
 def show_pending(update: Update, _: CallbackContext) -> None:
-    """User should be able to request from bot all his pending events (that are waiting its notification time)."""
+    """Show all pending events for the user (that are waiting for it's notification time)"""
 
     user_events = get_pending_events(update.effective_user.id)
 
@@ -16,7 +16,7 @@ def show_pending(update: Update, _: CallbackContext) -> None:
 
     update.message.reply_text("All entries you have:")
     for event in user_events:
-        keyboard = [[InlineKeyboardButton(text="Click to archive!", callback_data=f"event:{event.id}")]]
+        keyboard = [[InlineKeyboardButton(text="Click to archive!", callback_data=f"event-complete:{event.id}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         update.message.reply_text(
@@ -30,7 +30,7 @@ def show_pending(update: Update, _: CallbackContext) -> None:
 
 
 def show_expired(update: Update, _: CallbackContext) -> None:
-    """User should be able to request from bot all his expired events. Together with pending events - it's all events"""
+    """Show all expired events for the user. Together with pending events - there are all events"""
 
     user_events = get_expired_events(update.effective_user.id)
 
