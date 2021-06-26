@@ -44,5 +44,5 @@ def start(update: Update, context: CallbackContext) -> None:
         ["/list_expired", "/help"],
     ]
 
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
+    markup = ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True)
     update.message.reply_text(f"The available commands for now:\n{get_description()}", reply_markup=markup)

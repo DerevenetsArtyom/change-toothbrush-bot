@@ -171,8 +171,8 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
     query.message.reply_text(
         f"You've added notification date! Confirm the data below:\n\n"
         f'Subject - "{context.user_data["entry"]}"\n'
-        f'Expiration date - "{context.user_data["expiration_date"]}"\n'
-        f'Notification date - "{context.user_data["notification_date"]}"\n\n'
+        f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
+        f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
         f"If everything is correct, please enter /done command. "
         f"If not, enter /cancel command and start again."
     )
