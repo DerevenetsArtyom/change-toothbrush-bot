@@ -13,7 +13,7 @@ from handlers.conversation import (
     confirmation,
     start_creating_entry,
 )
-from handlers.list import complete_event_handler, show_expired, show_pending
+from handlers.list import complete_event_handler, delete_event_handler, show_expired, show_pending
 from handlers.others import cancel, help_handler, start
 from utils import error_logger
 
@@ -25,6 +25,7 @@ def setup_dispatcher(dispatcher):
     dispatcher.add_handler(CommandHandler("list_expired", show_expired))
 
     dispatcher.add_handler(CallbackQueryHandler(complete_event_handler, pattern="^event-complete:"))
+    dispatcher.add_handler(CallbackQueryHandler(delete_event_handler, pattern="^event-delete:"))
 
     conversation_handler = ConversationHandler(
         entry_points=[CommandHandler("add", start_creating_entry)],

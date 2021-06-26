@@ -82,6 +82,11 @@ def complete_event(event_id: int) -> None:
     event.save()
 
 
+def delete_event(event_id: int) -> None:
+    event = Event.get(Event.id == event_id)
+    event.delete_instance()
+
+
 def get_events_for_notification(user_id: int):
     """Returns events for which notification should go off today"""
 

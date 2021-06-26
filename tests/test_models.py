@@ -69,6 +69,17 @@ def test_complete_event(models, mixer):
     assert event.completed is True
 
 
+def test_delete_event(models, mixer):
+    for i in range(3):
+        mixer.blend(models.Event)
+
+    assert models.Event.select().count() == 3
+
+    models.delete_event(models.Event.get())
+
+    assert models.Event.select().count() == 2
+
+
 def test_get_events_for_notification(models, user, mixer):
     events_for_notification_amount = 8
 
