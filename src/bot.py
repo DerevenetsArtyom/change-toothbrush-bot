@@ -2,14 +2,11 @@ import os
 from datetime import time
 
 import pytz
-from dotenv import load_dotenv
 from telegram.ext import Updater
 
 from handlers.main import setup_dispatcher
 from jobs import check_events_for_expiration, check_events_for_notification
 from models import create_tables
-
-load_dotenv()
 
 
 def main():
@@ -57,5 +54,9 @@ def main():
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
     create_tables()
     main()
