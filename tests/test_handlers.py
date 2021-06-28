@@ -1,0 +1,14 @@
+def test_start_handler(bot_app, update, context):
+    bot_app.call("start", update, context)
+
+    current_user = update.effective_user
+    # TODO: test that user recode has been created in DB with correct data (if does not exist)?
+
+    # We say 'hello' to the user using his first and last name
+    assert current_user.first_name in update.message.reply_markdown_v2.call_args[0][0]
+    assert current_user.last_name in update.message.reply_markdown_v2.call_args[0][0]
+
+    # We store 'user_id' to 'user_data' for the future reference
+    assert context.user_data["user_id"] == current_user.id
+
+    assert "The available commands" in update.message.reply_text.call_args[0][0]

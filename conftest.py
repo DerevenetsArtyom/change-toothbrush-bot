@@ -112,13 +112,15 @@ def tg_user(mixer):
             "User",
             id="__randint",
             is_bot=False,
-            first_name=mixer.faker.first_name(),
-            last_name=mixer.faker.last_name(),
-            username=mixer.faker.user_name(),
+            first_name="Poligraph",
+            last_name="Sharikov",
+            username="Creature",
         )
     ):
         def mention_markdown_v2(self):
-            return "mention_markdown_v2"
+            """Simplified version of markdown formatted input"""
+
+            return f"{self.first_name} {self.last_name}"
 
     return User()
 
@@ -147,7 +149,7 @@ def message():
         "Message",
         chat_id="__randint",
         reply_text=MagicMock(return_value=factory(message_id=100800)()),  # always 100800 as the replied message id
-        reply_markdown_v2=MagicMock(return_value=factory(message_id=666)()),
+        reply_markdown_v2=MagicMock(),
         **kwargs,
     )()
 
