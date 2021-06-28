@@ -86,7 +86,7 @@ def bot_app(update, context):
 
     sys.path.append("src")
 
-    from src.handlers import others as main
+    from src.handlers import main
 
     main.call = lambda method, *args: getattr(main, method)(update, context)
 

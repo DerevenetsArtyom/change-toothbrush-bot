@@ -1,6 +1,12 @@
 from telegram import ReplyKeyboardMarkup, Update
-from telegram.ext import CallbackContext, ConversationHandler
-from telegram.ext import CallbackQueryHandler, CommandHandler, Filters, MessageHandler
+from telegram.ext import (
+    CallbackContext,
+    CallbackQueryHandler,
+    CommandHandler,
+    ConversationHandler,
+    Filters,
+    MessageHandler,
+)
 
 from handlers.conversation import (
     CONFIRMATION,
@@ -17,8 +23,7 @@ from handlers.conversation import (
 )
 from handlers.list import complete_event_handler, delete_event_handler, show_expired, show_pending
 from models import User
-from utils import error_logger
-from utils import get_description, logger
+from utils import error_logger, get_description, logger
 
 
 def help_handler(update: Update, _: CallbackContext) -> None:
