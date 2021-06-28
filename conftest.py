@@ -1,3 +1,14 @@
+"""
+The general approach for testing and mocking especially
+was stolen from Fedor Borshev: https://github.com/f213/selfmailbot/blob/master/conftest.py
+
+Thanks for that! I have not found other appropriate approaches for that in open source.
+
+"""
+import uuid
+from random import randint
+from unittest.mock import MagicMock
+
 import peewee
 import pytest
 
@@ -33,3 +44,98 @@ def mixer():
     from mixer.backend.peewee import mixer
 
     return mixer
+
+
+def factory(class_name: str = None, **kwargs):
+    """Simple factory to create a class with attributes from kwargs"""
+
+    class FactoryGeneratedClass:
+        pass
+
+    rewrite = {
+        '__randint': lambda *args: randint(100_000_000, 999_999_999),
+    }
+
+    for key, value in kwargs.items():
+        if value in rewrite:
+            value = rewrite[value](value)
+
+        setattr(FactoryGeneratedClass, key, value)
+
+    if class_name is not None:
+        FactoryGeneratedClass.__qualname__ = class_name
+        FactoryGeneratedClass.__name__ = class_name
+
+    return FactoryGeneratedClass
+
+
+@pytest.fixture
+def bot_app(update):
+    """Our bot app, adds the magic curring `call` method to call it with fake bot"""
+    from src import app
+    app.call = lambda method, *args, **kwargs: getattr(app, method)(bot, *args, **kwargs)
+
+    return app
+
+
+@pytest.fixture
+def bot(message):
+    """Mocked instance of the bot"""
+
+    class Bot:
+        send_message = MagicMock()
+
+    return Bot()
+
+
+@pytest.fixture
+def tg_user():
+    """telegram.User"""
+
+    class User(factory(
+        'User',
+        id='__randint',
+        is_bot=False,
+        first_name="a",
+        last_name="b",
+        username="c",
+    )):
+
+        @property
+        def full_name(self):
+            return f'{self.first_name} {self.last_name}'
+
+    return User()
+
+
+@pytest.fixture
+def db_user(models):
+    return lambda **kwargs: models.User.create(**{**dict(
+        pk=randint(100_000_000, 999_999_999),
+        is_confirmed=False,
+        email='user@e.mail',
+        full_name='Petrovich',
+        confirmation=str(uuid.uuid4()),
+        chat_id=randint(100_000_000, 999_999_999),
+    ), **kwargs})
+
+
+@pytest.fixture
+def message():
+    """telegram.Message"""
+    return lambda **kwargs: factory(
+        'Message',
+        chat_id='__randint',
+        reply_text=MagicMock(return_value=factory(message_id=100800)()),  # always 100800 as the replied message id
+        **kwargs,
+    )()
+
+
+@pytest.fixture
+def update(message, tg_user):
+    """telegram.Update"""
+    return factory(
+        'Update',
+        update_id='__randint',
+        message=message(from_user=tg_user),
+    )()
