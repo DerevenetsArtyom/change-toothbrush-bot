@@ -52,7 +52,7 @@ def factory(class_name: str = None, **kwargs):
         pass
 
     rewrite = {
-        '__randint': lambda *args: randint(100_000_000, 999_999_999),
+        "__randint": lambda *args: randint(100_000_000, 999_999_999),
     }
 
     for key, value in kwargs.items():
@@ -69,11 +69,26 @@ def factory(class_name: str = None, **kwargs):
 
 
 @pytest.fixture
-def bot_app(update):
+def context():
+    """telegram.CallbackContext"""
+
+    class CallbackContext(factory("CallbackContext")):
+        user_data = {}
+
+    return CallbackContext()
+
+
+@pytest.fixture
+def bot_app(update, context):
     """Our bot app, adds the magic curring `call` method to call it with fake bot"""
 
+    import sys
+
+    sys.path.append("src")
+
     from src.handlers import others as main
-    main.call = lambda method, *args, **kwargs: getattr(main, method)(update, *args, **kwargs)
+
+    main.call = lambda method, *args: getattr(main, method)(update, context)
 
     return main
 
@@ -92,17 +107,18 @@ def bot(message):
 def tg_user(mixer):
     """telegram.User"""
 
-    class User(factory(
-        'User',
-        id='__randint',
-        is_bot=False,
-        first_name=mixer.faker.first_name(),
-        last_name=mixer.faker.last_name(),
-        username=mixer.faker.user_name(),
-    )):
-
+    class User(
+        factory(
+            "User",
+            id="__randint",
+            is_bot=False,
+            first_name=mixer.faker.first_name(),
+            last_name=mixer.faker.last_name(),
+            username=mixer.faker.user_name(),
+        )
+    ):
         def mention_markdown_v2(self):
-            return 'mention_markdown_v2'
+            return "mention_markdown_v2"
 
     return User()
 
@@ -110,12 +126,17 @@ def tg_user(mixer):
 # TODO: Maybe is not needed
 @pytest.fixture
 def db_user(models):
-    return lambda **kwargs: models.User.create(**{**dict(
-        user_id=randint(100_000_000, 999_999_999),
-        chat_id=randint(100_000_000, 999_999_999),
-        first_name='Poligraph',
-        last_name='Sharikov',
-    ), **kwargs})
+    return lambda **kwargs: models.User.create(
+        **{
+            **dict(
+                user_id=randint(100_000_000, 999_999_999),
+                chat_id=randint(100_000_000, 999_999_999),
+                first_name="Poligraph",
+                last_name="Sharikov",
+            ),
+            **kwargs,
+        }
+    )
 
 
 @pytest.fixture
@@ -123,8 +144,8 @@ def message():
     """telegram.Message"""
 
     return lambda **kwargs: factory(
-        'Message',
-        chat_id='__randint',
+        "Message",
+        chat_id="__randint",
         reply_text=MagicMock(return_value=factory(message_id=100800)()),  # always 100800 as the replied message id
         reply_markdown_v2=MagicMock(return_value=factory(message_id=666)()),
         **kwargs,
@@ -136,8 +157,8 @@ def update(message, tg_user):
     """telegram.Update"""
 
     return factory(
-        'Update',
-        update_id='__randint',
+        "Update",
+        update_id="__randint",
         message=message(from_user=tg_user),
         effective_user=tg_user,
     )()
