@@ -5,7 +5,6 @@ was stolen from Fedor Borshev: https://github.com/f213/selfmailbot/blob/master/c
 Thanks for that! I have not found other appropriate approaches for that in open source.
 
 """
-import uuid
 from random import randint
 from unittest.mock import MagicMock
 
@@ -72,10 +71,11 @@ def factory(class_name: str = None, **kwargs):
 @pytest.fixture
 def bot_app(update):
     """Our bot app, adds the magic curring `call` method to call it with fake bot"""
-    from src import app
-    app.call = lambda method, *args, **kwargs: getattr(app, method)(bot, *args, **kwargs)
 
-    return app
+    from src.handlers import others as main
+    main.call = lambda method, *args, **kwargs: getattr(main, method)(update, *args, **kwargs)
+
+    return main
 
 
 @pytest.fixture
@@ -89,44 +89,44 @@ def bot(message):
 
 
 @pytest.fixture
-def tg_user():
+def tg_user(mixer):
     """telegram.User"""
 
     class User(factory(
         'User',
         id='__randint',
         is_bot=False,
-        first_name="a",
-        last_name="b",
-        username="c",
+        first_name=mixer.faker.first_name(),
+        last_name=mixer.faker.last_name(),
+        username=mixer.faker.user_name(),
     )):
 
-        @property
-        def full_name(self):
-            return f'{self.first_name} {self.last_name}'
+        def mention_markdown_v2(self):
+            return 'mention_markdown_v2'
 
     return User()
 
 
+# TODO: Maybe is not needed
 @pytest.fixture
 def db_user(models):
     return lambda **kwargs: models.User.create(**{**dict(
-        pk=randint(100_000_000, 999_999_999),
-        is_confirmed=False,
-        email='user@e.mail',
-        full_name='Petrovich',
-        confirmation=str(uuid.uuid4()),
+        user_id=randint(100_000_000, 999_999_999),
         chat_id=randint(100_000_000, 999_999_999),
+        first_name='Poligraph',
+        last_name='Sharikov',
     ), **kwargs})
 
 
 @pytest.fixture
 def message():
     """telegram.Message"""
+
     return lambda **kwargs: factory(
         'Message',
         chat_id='__randint',
         reply_text=MagicMock(return_value=factory(message_id=100800)()),  # always 100800 as the replied message id
+        reply_markdown_v2=MagicMock(return_value=factory(message_id=666)()),
         **kwargs,
     )()
 
@@ -134,8 +134,10 @@ def message():
 @pytest.fixture
 def update(message, tg_user):
     """telegram.Update"""
+
     return factory(
         'Update',
         update_id='__randint',
         message=message(from_user=tg_user),
+        effective_user=tg_user,
     )()
