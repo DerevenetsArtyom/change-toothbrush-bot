@@ -186,7 +186,6 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
 
 
 def confirmation(update: Update, context: CallbackContext) -> int:
-    logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
     create_event(context.user_data)
