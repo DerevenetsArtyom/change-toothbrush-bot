@@ -22,7 +22,7 @@ from handlers.conversation import (
     start_creating_entry,
 )
 from handlers.list import complete_event_handler, delete_event_handler, show_expired, show_pending
-from models import User
+from models import create_user, is_user_exists
 from utils import error_logger, get_description, logger
 
 
@@ -48,14 +48,8 @@ def start(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_markdown_v2(fr"Hi {current_user.mention_markdown_v2()}\!")
 
-    if not User.select().where(User.user_id == current_user.id):
-        User.create(
-            user_id=current_user.id,
-            chat_id=chat_id,
-            first_name=current_user.first_name,
-            last_name=current_user.last_name,
-            username=current_user.username,
-        )
+    if not is_user_exists(current_user):
+        create_user(current_user, chat_id)
 
     # Save "user_id" for future linking with new event
     context.user_data["user_id"] = current_user.id

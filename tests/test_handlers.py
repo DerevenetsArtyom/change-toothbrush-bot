@@ -1,8 +1,10 @@
-def test_start_handler(bot_app, update, context):
+def test_start_handler(bot_app, update, context, mocker):
+    mocker.patch("src.handlers.main.is_user_exists")
+    mocker.patch("src.handlers.main.create_user")
+
     bot_app.call("start", update, context)
 
     current_user = update.effective_user
-    # TODO: test that user recode has been created in DB with correct data (if does not exist)?
 
     # We say 'hello' to the user using his first and last name
     assert current_user.first_name in update.message.reply_markdown_v2.call_args[0][0]

@@ -103,3 +103,17 @@ def get_events_for_expiration(user_id: int):
     user = User.get(user_id=user_id)
 
     return user.events.select().where(Event.expiration_date == today_date, Event.completed == False)  # noqa: E712
+
+
+def is_user_exists(tg_user):
+    return User.select().where(User.user_id == tg_user.id)
+
+
+def create_user(user_data, chat_id: int):
+    User.create(
+        user_id=user_data.id,
+        chat_id=chat_id,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        username=user_data.username,
+    )
