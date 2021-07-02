@@ -13,12 +13,12 @@ import pytest
 
 
 @pytest.fixture
-def db():
+def test_db():
     return peewee.SqliteDatabase(":memory:")
 
 
 @pytest.fixture(autouse=True)
-def models(db):
+def models(test_db):
     """
     Emulate the transaction -- create a new db before each test and flush it after.
     Also, return the app.models module
@@ -28,14 +28,13 @@ def models(db):
 
     app_models = [models.User, models.Event]
 
-    db.bind(app_models, bind_refs=False, bind_backrefs=False)
-    db.connect()
-    db.create_tables(app_models)
-
+    test_db.bind(app_models, bind_refs=False, bind_backrefs=False)
+    test_db.connect()
+    test_db.create_tables(app_models)
     yield models
 
-    db.drop_tables(app_models)
-    db.close()
+    test_db.drop_tables(app_models)
+    test_db.close()
 
 
 @pytest.fixture
