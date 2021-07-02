@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext, ConversationHandler
 
-from models import create_event
+from models import Event
 from utils import logger, prettify_date
 
 SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
@@ -188,7 +188,7 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
 def confirmation(update: Update, context: CallbackContext) -> int:
     logger.info("context.user_data %s", context.user_data)
 
-    create_event(context.user_data)
+    Event.create_event(context.user_data)
 
     update.message.reply_text("Great! The entry has been created!\n Use /add command if you want to add more.")
 

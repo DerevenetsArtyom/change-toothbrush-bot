@@ -41,6 +41,21 @@ class Event(pw.Model):
     class Meta:
         database = database
 
+    @classmethod
+    def create_event(cls, user_data: dict) -> None:
+        """Creates event from data passed by user"""
+
+        expiration_date = user_data["expiration_date"]
+        notification_date = user_data["notification_date"]
+        current_user_id = User.get(user_id=user_data["user_id"])
+
+        cls.create(
+            author=current_user_id,
+            subject=user_data["entry"],
+            expiration_date=expiration_date,
+            notification_date=notification_date,
+        )
+
 
 def create_tables():
     with database:
@@ -59,21 +74,6 @@ def get_expired_events(user_id):
 
     current_user_id = User.get(user_id=user_id).id
     return Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
-
-
-def create_event(user_data: dict) -> None:
-    """Creates event from data passed by user"""
-
-    expiration_date = user_data["expiration_date"]
-    notification_date = user_data["notification_date"]
-
-    current_user_id = User.get(user_id=user_data["user_id"]).id
-    Event.create(
-        author=current_user_id,
-        subject=user_data["entry"],
-        expiration_date=expiration_date,
-        notification_date=notification_date,
-    )
 
 
 def complete_event(event_id: int) -> None:
@@ -106,10 +106,14 @@ def get_events_for_expiration(user_id: int):
 
 
 def is_user_exists(tg_user) -> bool:
+    """Checks if user with given ID exists in the DB"""
+
     return User.select().where(User.user_id == tg_user.id)
 
 
 def create_user(user_data, chat_id: int) -> None:
+    """Creates user in DB from data obtained from TG user"""
+
     User.create(
         user_id=user_data.id,
         chat_id=chat_id,

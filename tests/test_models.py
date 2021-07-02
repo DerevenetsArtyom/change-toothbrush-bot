@@ -21,7 +21,7 @@ def test_create_event(models, user):
         "entry": "This is test entry",
     }
 
-    models.create_event(user_data)
+    models.Event.create_event(user_data)
 
     created_event = models.Event.get_by_id(1)
 
