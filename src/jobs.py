@@ -8,7 +8,7 @@ def check_events_for_notification(context: CallbackContext):
     """Fetch user events that should be notified today and send messages to the user"""
 
     for user in User.select():
-        today_events_to_notify = get_events_for_notification(user.id)
+        today_events_to_notify = get_events_for_notification(user.user_id)
 
         for event in today_events_to_notify:
             context.bot.send_message(
@@ -24,7 +24,7 @@ def check_events_for_expiration(context: CallbackContext):
     """Fetch user events that should expired today and send messages to the user"""
 
     for user in User.select():
-        today_events_to_expire = get_events_for_expiration(user.id)
+        today_events_to_expire = get_events_for_expiration(user.user_id)
 
         for event in today_events_to_expire:
             context.bot.send_message(
