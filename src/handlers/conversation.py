@@ -3,13 +3,9 @@ from datetime import datetime, timedelta
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext, ConversationHandler
 
+from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT, USER_INPUT_DATE_FORMAT
 from models import Event
 from utils import logger, prettify_date
-
-SUBJECT, EXPIRATION_DATE, NOTIFICATION_DATE, CONFIRMATION = [0, 1, 2, 3]
-
-USER_INPUT_DATE_FORMAT = "%d-%m-%Y"
-
 
 #####################
 # SUBJECT step (№1) #

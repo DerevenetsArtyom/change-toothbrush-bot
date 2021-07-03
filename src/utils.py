@@ -1,5 +1,7 @@
 import logging
 
+from constants import HUMAN_READABLE_OUTPUT_DATE_FORMAT
+
 # Enable logging
 logging.basicConfig(
     format="[%(filename)s:%(lineno)s - %(funcName)20s() ] - %(levelname)s - %(message)s", level=logging.INFO
@@ -24,4 +26,4 @@ def get_description() -> str:
 def prettify_date(date_object) -> str:
     """Format datetime object to human-friendly format"""
 
-    return date_object.strftime("%d %B %Y")
+    return date_object.strftime(HUMAN_READABLE_OUTPUT_DATE_FORMAT)
