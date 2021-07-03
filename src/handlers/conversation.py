@@ -17,7 +17,7 @@ USER_INPUT_DATE_FORMAT = "%d-%m-%Y"
 
 
 def start_creating_entry(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text("Enter subject / entry below:")
+    update.message.reply_text("Enter your subject or event below:")
 
     # Duplicate adding user_id to context here (if '/start' command was skipped)
     context.user_data["user_id"] = update.effective_user.id
@@ -39,8 +39,10 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        f"You've added an entry - '{user_text}'!\n" f"Now select from list or add expiration date manually (%d-%m-%Y):",
+        f"You've added an entry \- *_{user_text}_*\n"
+        f"Now select an __expiration date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
+        parse_mode="MarkdownV2",
     )
 
     return EXPIRATION_DATE
@@ -60,7 +62,7 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
         context.user_data["expiration_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
         logger.info("wrong input date format - %s", update.message.text)
-        update.message.reply_text("The date format is wrong. Try again, please. Expected format: 21-12-2021")
+        update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return EXPIRATION_DATE
 
     keyboard = [
@@ -71,8 +73,10 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        "You've added an expiration date! \nNow select from list or add notification date manually (%d-%m-%Y):",
+        "You've added an expiration date\! \n"
+        "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
+        parse_mode="MarkdownV2",
     )
 
     return NOTIFICATION_DATE
@@ -109,8 +113,10 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     markup = InlineKeyboardMarkup(keyboard)
     query.message.reply_text(
-        "You've added an expiration date! \nNow select from list or add notification date manually (%d-%m-%Y):",
+        "You've added an expiration date\! \n"
+        "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
+        parse_mode="MarkdownV2",
     )
 
     return NOTIFICATION_DATE
@@ -130,7 +136,7 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
         context.user_data["notification_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
         logger.info("wrong input date format - %s", update.message.text)
-        update.message.reply_text("The date format is wrong. Try again, please. Expected format: 21-12-2021")
+        update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return NOTIFICATION_DATE
 
     update.message.reply_text(
