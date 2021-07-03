@@ -54,7 +54,6 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     logger.info("context.user_data %s", context.user_data)
 
     try:
-        # TODO: add validation for date to be in the future only
         context.user_data["expiration_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
         logger.info("wrong input date format - %s", update.message.text)
@@ -128,7 +127,6 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
     logger.info("context.user_data before %s", context.user_data)
 
     try:
-        # TODO: add validation for date to be in the future only and SHOULD BE BEFORE EXPIRATION DATE
         context.user_data["notification_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
         logger.info("wrong input date format - %s", update.message.text)

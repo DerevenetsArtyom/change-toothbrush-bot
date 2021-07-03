@@ -63,14 +63,14 @@ def create_tables():
 
 
 def get_pending_events(user_id):
-    """Returns all pending events (that are waiting its notification time)."""
+    """Return all pending events (that are waiting its notification time)."""
 
     current_user_id = User.get(user_id=user_id).id
     return Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
 
 
 def get_expired_events(user_id):
-    """Returns all archived / expires events (that have been completed already)."""
+    """Return all archived / expires events (that have been completed already)."""
 
     current_user_id = User.get(user_id=user_id).id
     return Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
@@ -88,7 +88,7 @@ def delete_event(event_id: int) -> None:
 
 
 def get_events_for_notification(user_id: int):
-    """Returns events for which notification should go off today"""
+    """Return events for which notification should go off today."""
 
     today_date = datetime.datetime.now().date()
     user = User.get(user_id=user_id)
@@ -97,7 +97,7 @@ def get_events_for_notification(user_id: int):
 
 
 def get_events_for_expiration(user_id: int):
-    """Returns events that expire today"""
+    """Return events that expire today."""
 
     today_date = datetime.datetime.now().date()
     user = User.get(user_id=user_id)
@@ -106,13 +106,13 @@ def get_events_for_expiration(user_id: int):
 
 
 def is_user_exists(tg_user) -> bool:
-    """Checks if user with given ID exists in the DB"""
+    """Check if user with given ID exists in the DB."""
 
     return User.select().where(User.user_id == tg_user.id)
 
 
 def create_user(user_data, chat_id: int) -> None:
-    """Creates user in DB from data obtained from TG user"""
+    """Create user in DB from data obtained from TG user."""
 
     User.create(
         user_id=user_data.id,
