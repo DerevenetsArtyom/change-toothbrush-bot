@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, Update
 from telegram.ext import CallbackContext, ConversationHandler
 
 from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT, USER_INPUT_DATE_FORMAT
@@ -38,7 +38,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
         f"You've added an entry \- *_{user_text}_*\n"
         f"Now select an __expiration date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
-        parse_mode="MarkdownV2",
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
 
     return EXPIRATION_DATE
@@ -71,7 +71,7 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
         "You've added an expiration date\! \n"
         "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
-        parse_mode="MarkdownV2",
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
 
     return NOTIFICATION_DATE
@@ -111,7 +111,7 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
         "You've added an expiration date\! \n"
         "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
-        parse_mode="MarkdownV2",
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
 
     return NOTIFICATION_DATE
