@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, Update
 from telegram.ext import CallbackContext, ConversationHandler
+from telegram.utils.helpers import escape_markdown
 
 from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT, USER_INPUT_DATE_FORMAT
 from models import Event
@@ -35,7 +36,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
-        f"You've added an entry \- *_{user_text}_*\n"
+        f"You've added an entry \- *_{escape_markdown(user_text, version=2)}_*\n"
         f"Now select an __expiration date__ from list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=markup,
         parse_mode=ParseMode.MARKDOWN_V2,
@@ -138,7 +139,7 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
         f'Subject - "{context.user_data["entry"]}"\n'
         f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
         f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
-        f"If everything is correct, please enter /done command. "
+        f"If everything is correct, please enter /done command.\n"
         f"If not, enter /cancel command and start again."
     )
 
@@ -173,7 +174,7 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
         f'Subject - "{context.user_data["entry"]}"\n'
         f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
         f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
-        f"If everything is correct, please enter /done command. "
+        f"If everything is correct, please enter /done command.\n"
         f"If not, enter /cancel command and start again."
     )
 
@@ -190,7 +191,10 @@ def confirmation(update: Update, context: CallbackContext) -> int:
 
     Event.create_event(context.user_data)
 
-    update.message.reply_text("Great! The entry has been created!\n Use /add command if you want to add more.")
+    update.message.reply_text(
+        "Great! The entry has been created!\n"
+        "Use /add command if you want to add more or /list to check all your events"
+    )
 
     # TODO: show to user newly created data from DB record
 

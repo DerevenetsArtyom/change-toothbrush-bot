@@ -19,7 +19,7 @@ def test_start_creating_entry_handler(bot_app, update, context):
 
 def test_add_new_entry_handler(bot_app, update, context):
     # emulate user input of subject
-    user_input_text = "Buy new socks!"
+    user_input_text = "Buy new socks"
     update.message.text = user_input_text
 
     return_value = bot_app.call("add_new_entry", update, context)
