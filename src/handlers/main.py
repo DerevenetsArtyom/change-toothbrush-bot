@@ -23,7 +23,7 @@ from handlers.conversation import (
 )
 from handlers.list import complete_event_handler, delete_event_handler, show_expired, show_pending
 from models import create_user, is_user_exists
-from utils import error_logger, get_description, logger
+from utils import get_description, logger
 
 
 def help_handler(update: Update, _: CallbackContext) -> None:
@@ -104,4 +104,4 @@ def setup_dispatcher(dispatcher):
     dispatcher.add_handler(conversation_handler)
 
     # add an handler for errors
-    dispatcher.add_error_handler(error_logger)
+    # dispatcher.add_error_handler(error_logger)
