@@ -101,4 +101,4 @@ def setup_dispatcher(dispatcher):
     dispatcher.add_handler(conversation_handler)
 
     # add an handler for errors
-    dispatcher.add_error_handler(error_logger)
+    # dispatcher.add_error_handler(error_logger)
