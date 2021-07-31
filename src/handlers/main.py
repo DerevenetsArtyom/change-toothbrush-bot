@@ -27,6 +27,9 @@ from utils import error_logger, get_description, logger
 
 
 def help_handler(update: Update, _: CallbackContext) -> None:
+    division_by_zero = 1 / 0
+    print(division_by_zero)
+
     update.message.reply_text(f"Supported commands:\n{get_description()}")
 
 

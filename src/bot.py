@@ -2,6 +2,7 @@ import os
 from datetime import time
 
 import pytz
+import sentry_sdk
 from telegram.ext import Updater
 
 from handlers.main import setup_dispatcher
@@ -16,6 +17,11 @@ def main():
 
     PORT = int(os.getenv("PORT", "8443"))
     HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
+
+    sentry_dsn = os.getenv("SENTRY_DSN")
+    print("sentry_dsn", sentry_dsn)
+    if sentry_dsn:
+        sentry_sdk.init(sentry_dsn)
 
     # create the updater, that will automatically create also a dispatcher and a queue to make them dialog
     updater = Updater(telegram_token)
