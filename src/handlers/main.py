@@ -27,9 +27,6 @@ from utils import get_description, logger
 
 
 def help_handler(update: Update, _: CallbackContext) -> None:
-    division_by_zero = 1 / 0
-    print(division_by_zero)
-
     update.message.reply_text(f"Supported commands:\n{get_description()}")
 
 
@@ -102,6 +99,3 @@ def setup_dispatcher(dispatcher):
     )
 
     dispatcher.add_handler(conversation_handler)
-
-    # add an handler for errors
-    # dispatcher.add_error_handler(error_logger)

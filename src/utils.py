@@ -10,10 +10,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def error_logger(update, context):
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-
-
 def get_description() -> str:
     return """
 /help - Show help

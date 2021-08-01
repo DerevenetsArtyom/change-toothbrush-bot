@@ -15,11 +15,7 @@ def main():
     if telegram_token is None:
         raise Exception("Please setup the .env variable TELEGRAM_TOKEN.")
 
-    PORT = int(os.getenv("PORT", "8443"))
-    HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
-
     sentry_dsn = os.getenv("SENTRY_DSN")
-    print("sentry_dsn", sentry_dsn)
     if sentry_dsn:
         sentry_sdk.init(sentry_dsn)
 
@@ -32,6 +28,8 @@ def main():
     job_queue.run_daily(check_events_for_expiration, time(hour=9, minute=10, tzinfo=pytz.timezone("Europe/Kiev")))
 
     setup_dispatcher(dispatcher)
+
+    HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
 
     if HEROKU_APP_NAME is None:  # pooling mode, local development
         print("Can't detect 'HEROKU_APP_NAME' env. Running bot in pooling mode.")
@@ -48,6 +46,7 @@ def main():
         print(
             f"Running bot in webhook mode. Make sure that this url is correct: https://{HEROKU_APP_NAME}.herokuapp.com/"
         )
+        PORT = int(os.getenv("PORT", "8443"))
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,
