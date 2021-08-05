@@ -30,3 +30,12 @@ flake:
 
 
 lint: black flake isort
+
+trans:
+	pybabel extract --input-dirs=src/ --output=locale/change-toothbrush-bot.pot --project=change-toothbrush-bot
+	pybabel update --output-dir=locale --input-file=locale/change-toothbrush-bot.pot
+
+compile:
+	pybabel compile --directory=locale --statistics
+
+messages: trans compile
