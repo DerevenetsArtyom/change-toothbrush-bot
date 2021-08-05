@@ -56,6 +56,29 @@ Local usage is pretty simple - just run from the root directory
 python3.8 src/bot.py
 ```
 
+Instruction for translating messages:
+```
+# Step 1: extract texts
+pybabel extract --input-dirs=src/ --output=locale/change-toothbrush-bot.pot --project=change-toothbrush-bot
+ 
+# Step 2: create *.po files. E.g. create en, ru, uk locales.
+pybabel init --locale=ru_RU --input-file=locale/change-toothbrush-bot.pot --output-dir=locale 
+ 
+# Step 3: translate texts located in locale/{language}/LC_MESSAGES/*.po
+ 
+# Step 4: compile translations
+pybabel compile --directory=locale --statistics
+ 
+# Step 5: When you change the code of your bot you need to update po & mo files.
+#     Step 5.1: regenerate pot file:
+          pybabel extract --input-dirs=src/ --output=locale/change-toothbrush-bot.pot --project=change-toothbrush-bot
+#     Step 5.2: update po files
+          pybabel update --output-dir=locale --input-file=locale/change-toothbrush-bot.pot
+#     Step 5.3: update your translations (location and tools you know from step 3)
+#     Step 5.4: compile mo files
+          pybabel compile --directory=locale --statistics
+```
+
 You may take a look at [Makefile](Makefile) to get some insight about the usage.
 
 ## 🙋‍♂️ Hacking
