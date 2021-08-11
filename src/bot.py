@@ -46,12 +46,14 @@ def main():
         print(
             f"Running bot in webhook mode. Make sure that this url is correct: https://{HEROKU_APP_NAME}.herokuapp.com/"
         )
-        PORT = int(os.getenv("PORT", "8443"))
+        PORT = int(os.getenv("PORT", "5000"))
+        DOMAIN_NAME = os.getenv("DOMAIN_NAME")
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,
-            url_path=telegram_token,
-            webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/{telegram_token}",
+            # url_path=telegram_token,
+            # webhook_url=f"https://{HEROKU_APP_NAME}.{DOMAIN_NAME}/{telegram_token}",
+            webhook_url=f"https://{HEROKU_APP_NAME}.{DOMAIN_NAME}",
         )
 
         updater.idle()
