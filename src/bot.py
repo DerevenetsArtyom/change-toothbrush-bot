@@ -29,10 +29,11 @@ def main():
 
     setup_dispatcher(dispatcher)
 
-    HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME")
+    APPLICATION_NAME = os.getenv("APPLICATION_NAME")
+    DOMAIN_NAME = os.getenv("DOMAIN_NAME", "")
 
-    if HEROKU_APP_NAME is None:  # pooling mode, local development
-        print("Can't detect 'HEROKU_APP_NAME' env. Running bot in pooling mode.")
+    if APPLICATION_NAME is None:  # pooling mode, local development
+        print("Can't detect 'APPLICATION_NAME' env. Running bot in pooling mode.")
         print("Note: this is not a great way to deploy the bot in Heroku.")
 
         # Start the Bot
@@ -44,14 +45,15 @@ def main():
 
     else:  # webhook mode, production-like Heroku setup
         print(
-            f"Running bot in webhook mode. Make sure that this url is correct: https://{HEROKU_APP_NAME}.herokuapp.com/"
+            f"Running bot in webhook mode. "
+            f"Make sure that this url is correct: https://{APPLICATION_NAME}.{DOMAIN_NAME}/"
         )
         PORT = int(os.getenv("PORT", "8443"))
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,
             url_path=telegram_token,
-            webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/{telegram_token}",
+            webhook_url=f"https://{APPLICATION_NAME}.{DOMAIN_NAME}/{telegram_token}",
         )
 
         updater.idle()
