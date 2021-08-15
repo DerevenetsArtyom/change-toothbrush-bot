@@ -52,9 +52,8 @@ def main():
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,
-            webhook_url=f"https://{APPLICATION_NAME}.{DOMAIN_NAME}",
-            # url_path=telegram_token,
-            # webhook_url=f"https://{HEROKU_APP_NAME}.{DOMAIN_NAME}/{telegram_token}",
+            url_path=telegram_token,
+            webhook_url=f"https://{APPLICATION_NAME}.{DOMAIN_NAME}/{telegram_token}",
         )
 
         updater.idle()
