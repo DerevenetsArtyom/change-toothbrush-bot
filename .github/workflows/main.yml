@@ -74,8 +74,23 @@ jobs:
           pip install -r requirements.txt
           pytest tests/
 
+#  deploy:
+#    needs: [black, flake, isort, tests]
+#    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/master'
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Deploying to Heroku
+#        uses: akhileshns/heroku-deploy@v3.12.12
+#        with:
+#          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+#          heroku_app_name: ${{ secrets.HEROKU_PROJECT_NAME }}
+#          heroku_email: ${{ secrets.HEROKU_EMAIL_ADSRESS }}
+
   deploy:
-    # If the linter job does not pass,the deploy job will not even be executed
+    # If the jobs above do not pass,the deployment job will not even be executed
     needs: [black, flake, isort, tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -83,10 +98,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Deploying to Heroku
-        # More details available at: https://github.com/marketplace/actions/deploy-to-heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+      - name: Deploy to Dokku
+        uses: idoberko2/dokku-deploy-github-action@v1
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_PROJECT_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL_ADSRESS }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dokku-host: ${{ secrets.DOKKU_HOST }}
+          app-name: ${{ secrets.DOKKU_APPLICATION }}
+          git-push-flags: '--force'

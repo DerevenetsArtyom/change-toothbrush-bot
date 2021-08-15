@@ -48,7 +48,7 @@ def main():
             f"Running bot in webhook mode. "
             f"Make sure that this url is correct: https://{APPLICATION_NAME}.{DOMAIN_NAME}/"
         )
-        PORT = int(os.getenv("PORT", "8443"))
+        PORT = int(os.getenv("PORT", "5000"))
         updater.start_webhook(
             listen="0.0.0.0",
             port=PORT,

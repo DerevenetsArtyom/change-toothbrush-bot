@@ -4,7 +4,7 @@ from constants import HUMAN_READABLE_OUTPUT_DATE_FORMAT
 
 # Enable logging
 logging.basicConfig(
-    format="[%(filename)s:%(lineno)s - %(funcName)20s() ] - %(levelname)s - %(message)s", level=logging.INFO
+    format="[%(filename)s:%(lineno)s - %(funcName)20s() ] - %(levelname)s - %(message)s", level=logging.DEBUG
 )
 
 logger = logging.getLogger(__name__)
