@@ -81,6 +81,71 @@ pybabel compile --directory=locale --statistics
 
 You may take a look at [Makefile](Makefile) to get some insight about the usage.
 
+## 🚢 Deploy with Dokku (DO-based)
+
+Assuming you have set up everything on Digital Ocean: 
+
+### On Dokku machine:
+1. Create an application (in Dokku terms).  
+Make sure you've picked up an appropriate name to have it as a subdomain.
+```
+dokku apps:create [app_name]
+```
+
+2. Make sure Dokku knows about your main domain and add subdomain for the app. 
+```
+dokku domains:set-global [your.main.domain]
+dokku domains:set [app_name] [app_name].[your.main.domain]
+```
+
+3. Set up config variables to be able to run the bot.  
+In case you're migrating from Heroku - run `heroku config` and adjust an output.
+
+```
+dokku config:set [app_name] APPLICATION_NAME=[app_name]
+dokku config:set [app_name] DOMAIN_NAME=[your.main.domain]
+dokku config:set [app_name] TELEGRAM_TOKEN=""
+dokku config:set [app_name] SENTRY_DSN=""
+```
+
+4. Upload certificates to the server (if you have your own and don't want to use LetsEncrypt). Do it somewhere in the directory of your application: `/home/dokku/[app_name]/`
+
+```
+# mkdir certs && cd certs/
+touch [app_name].crt
+# open a file and copy-paste the first Certificate
+
+touch [app_name].key
+# open a file and copy-paste the second Private Key
+
+# You will need to create a .tar archive with these files and make Dokku know about it. 
+tar -cvf cert-key.tar [app_name].key [app_name].crt
+dokku certs:add [app_name] < cert-key.tar
+
+# Check that everything is correct
+dokku certs:report [app_name]
+```
+
+5. In case you need a database (you probably need) - install Postgres plugin and link DB with the app. 
+```
+sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
+
+dokku postgres:create [app_name]-db
+dokku postgres:link [app_name]-db [app_name]
+```
+
+### On your local machine
+
+The only thing you need to do - add another remote to be able to push the code there.
+
+```
+git remote add dokku dokku@[your.server.ip.address]:[app_name]
+```
+Then you should be able to deploy your app just by typing
+```
+git push dokku master:master
+```
+
 ## 🙋‍♂️ Hacking
 
 PR's are welcome
