@@ -102,6 +102,6 @@ jobs:
         uses: idoberko2/dokku-deploy-github-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          dokku-host: ${{ secrets.DOKKU_HOST }}
+          dokku-host: ${{ secrets.DOKKU_HOST }} # I've made that work only with direct IP, not domain name
           app-name: ${{ secrets.DOKKU_APPLICATION }}
           git-push-flags: '--force'
