@@ -5,7 +5,7 @@ from models import complete_event, delete_event, get_expired_events, get_pending
 from utils import prettify_date
 
 
-def show_pending(update: Update, _: CallbackContext) -> None:
+def show_pending(update: Update, context: CallbackContext) -> None:
     """Show all pending events for the user (that are waiting for it's notification time)"""
 
     user_events = get_pending_events(update.effective_user.id)
@@ -77,3 +77,17 @@ def delete_event_handler(update: Update, _: CallbackContext) -> None:
     delete_event(event_id)
 
     query.message.reply_text("Event was deleted!")
+
+
+def set_language_code(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    query.answer()
+
+    if ":" not in query.data:
+        query.message.reply_text("Something went wrong. Don't know your choice")
+        return
+
+    language_code = query.data.split(":")[-1]
+    context.user_data["language_code"] = language_code
+
+    query.message.reply_text(f"Your language was set to '{language_code}' !")
