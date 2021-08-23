@@ -1,11 +1,11 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
-from models import complete_event, delete_event, get_expired_events, get_pending_events
+from models import get_expired_events, get_pending_events
 from utils import prettify_date
 
 
-def show_pending(update: Update, context: CallbackContext) -> None:
+def show_pending(update: Update, _: CallbackContext) -> None:
     """Show all pending events for the user (that are waiting for it's notification time)"""
 
     user_events = get_pending_events(update.effective_user.id)
@@ -49,45 +49,3 @@ def show_expired(update: Update, _: CallbackContext) -> None:
             f"Expiration date: {prettify_date(event.expiration_date)}\n",
             reply_markup=reply_markup,
         )
-
-
-def complete_event_handler(update: Update, _: CallbackContext) -> None:
-    query = update.callback_query
-    query.answer()
-
-    if ":" not in query.data:
-        query.message.reply_text("Something went wrong. Don't know your choice")
-        return
-
-    event_id = query.data.split(":")[-1]
-    complete_event(event_id)
-
-    query.message.reply_text("Event was completed and archived!")
-
-
-def delete_event_handler(update: Update, _: CallbackContext) -> None:
-    query = update.callback_query
-    query.answer()
-
-    if ":" not in query.data:
-        query.message.reply_text("Something went wrong. Don't know your choice")
-        return
-
-    event_id = query.data.split(":")[-1]
-    delete_event(event_id)
-
-    query.message.reply_text("Event was deleted!")
-
-
-def set_language_code(update: Update, context: CallbackContext) -> None:
-    query = update.callback_query
-    query.answer()
-
-    if ":" not in query.data:
-        query.message.reply_text("Something went wrong. Don't know your choice")
-        return
-
-    language_code = query.data.split(":")[-1]
-    context.user_data["language_code"] = language_code
-
-    query.message.reply_text(f"Your language was set to '{language_code}' !")

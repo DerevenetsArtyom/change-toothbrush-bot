@@ -8,6 +8,7 @@ from telegram.ext import (
     MessageHandler,
 )
 
+from handlers.callback_handlers import complete_event_handler, delete_event_handler
 from handlers.conversation import (
     CONFIRMATION,
     EXPIRATION_DATE,
@@ -21,7 +22,7 @@ from handlers.conversation import (
     confirmation,
     start_creating_entry,
 )
-from handlers.list import complete_event_handler, delete_event_handler, show_expired, show_pending
+from handlers.list import show_expired, show_pending
 from models import create_user, is_user_exists
 from utils import get_description, logger
 
