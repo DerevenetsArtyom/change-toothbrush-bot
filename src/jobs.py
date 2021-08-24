@@ -1,3 +1,7 @@
+import os
+import socket
+import urllib.request
+
 from telegram.ext import CallbackContext
 
 from models import User, complete_event, get_events_for_expiration, get_events_for_notification
@@ -18,6 +22,13 @@ def check_events_for_notification(context: CallbackContext):
                 f"Notification date: {prettify_date(event.notification_date)}\n"
                 f"Expiration date: {prettify_date(event.expiration_date)}\n",
             )
+
+    HEALTHCHECKS_UUID = os.getenv("HEALTHCHECKS_UUID")
+    if HEALTHCHECKS_UUID:
+        try:
+            urllib.request.urlopen(f"https://hc-ping.com/{HEALTHCHECKS_UUID}", timeout=10)
+        except socket.error as e:
+            print("Ping failed: %s" % e)
 
 
 def check_events_for_expiration(context: CallbackContext):
