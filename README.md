@@ -1,6 +1,7 @@
 # Change Toothbrush Bot - never forget to update things
 
 ![](https://github.com/DerevenetsArtyom/change-toothbrush-bot/actions/workflows/main.yml/badge.svg) 
+![](https://healthchecks.io/badge/29fd6378-c023-4725-bb81-7cbf68/xF8_DiYV-2.svg)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
 ![](https://img.shields.io/github/license/DerevenetsArtyom/change-toothbrush-bot)
@@ -107,6 +108,8 @@ dokku config:set [app_name] APPLICATION_NAME=[app_name]
 dokku config:set [app_name] DOMAIN_NAME=[your.main.domain]
 dokku config:set [app_name] TELEGRAM_TOKEN=""
 dokku config:set [app_name] SENTRY_DSN=""
+dokku config:set [app_name] HEALTHCHECKS_NOTIFICATION_UUID=""
+dokku config:set [app_name] HEALTHCHECKS_EXPIRATION_UUID=""
 ```
 
 4. Upload certificates to the server (if you have your own and don't want to use LetsEncrypt). Do it somewhere in the directory of your application: `/home/dokku/[app_name]/`
