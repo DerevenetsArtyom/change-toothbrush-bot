@@ -108,6 +108,8 @@ dokku config:set [app_name] APPLICATION_NAME=[app_name]
 dokku config:set [app_name] DOMAIN_NAME=[your.main.domain]
 dokku config:set [app_name] TELEGRAM_TOKEN=""
 dokku config:set [app_name] SENTRY_DSN=""
+dokku config:set [app_name] HEALTHCHECKS_NOTIFICATION_UUID=""
+dokku config:set [app_name] HEALTHCHECKS_EXPIRATION_UUID=""
 ```
 
 4. Upload certificates to the server (if you have your own and don't want to use LetsEncrypt). Do it somewhere in the directory of your application: `/home/dokku/[app_name]/`

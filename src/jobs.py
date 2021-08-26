@@ -23,10 +23,10 @@ def check_events_for_notification(context: CallbackContext):
                 f"Expiration date: {prettify_date(event.expiration_date)}\n",
             )
 
-    HEALTHCHECKS_UUID = os.getenv("HEALTHCHECKS_UUID")
-    if HEALTHCHECKS_UUID:
+    HEALTHCHECKS_NOTIFICATION_UUID = os.getenv("HEALTHCHECKS_NOTIFICATION_UUID")
+    if HEALTHCHECKS_NOTIFICATION_UUID:
         try:
-            urllib.request.urlopen(f"https://hc-ping.com/{HEALTHCHECKS_UUID}", timeout=10)
+            urllib.request.urlopen(f"https://hc-ping.com/{HEALTHCHECKS_NOTIFICATION_UUID}", timeout=10)
         except socket.error as e:
             print("Ping failed: %s" % e)
 
@@ -47,3 +47,10 @@ def check_events_for_expiration(context: CallbackContext):
             )
 
             complete_event(event.id)
+
+    HEALTHCHECKS_EXPIRATION_UUID = os.getenv("HEALTHCHECKS_EXPIRATION_UUID")
+    if HEALTHCHECKS_EXPIRATION_UUID:
+        try:
+            urllib.request.urlopen(f"https://hc-ping.com/{HEALTHCHECKS_EXPIRATION_UUID}", timeout=10)
+        except socket.error as e:
+            print("Ping failed: %s" % e)
