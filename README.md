@@ -1,6 +1,7 @@
 # Change Toothbrush Bot - never forget to update things
 
 ![](https://github.com/DerevenetsArtyom/change-toothbrush-bot/actions/workflows/main.yml/badge.svg) 
+![](https://healthchecks.io/badge/29fd6378-c023-4725-bb81-7cbf68/xF8_DiYV-2.svg)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
 ![](https://img.shields.io/github/license/DerevenetsArtyom/change-toothbrush-bot)
