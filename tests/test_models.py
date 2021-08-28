@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import pytest
 
@@ -46,6 +46,25 @@ def test_get_expired_events(models, user, mixer):
     assert models.get_expired_events(user.id).count() == expired_events_amount
 
 
+def test_get_expired_events_ordering(models, user, mixer):
+    expired_events_amount = 10
+    now = datetime.now()
+
+    for i in range(expired_events_amount):
+        mixer.blend(
+            models.Event,
+            author=user,
+            subject=mixer.faker.text(35),
+            completed=True,
+            expiration_date=now - timedelta(days=i),
+        )
+
+    events_list = models.get_expired_events(user.id)
+
+    for i in range(len(events_list) - 1):
+        assert events_list[i].expiration_date < events_list[i + 1].expiration_date
+
+
 def test_get_pending_events(models, user, mixer):
     pending_events_amount = 5
 
@@ -53,6 +72,19 @@ def test_get_pending_events(models, user, mixer):
         mixer.blend(models.Event, author=user, subject=mixer.faker.text(35))
 
     assert models.get_pending_events(user.id).count() == pending_events_amount
+
+
+def test_get_pending_events_ordering(models, user, mixer):
+    pending_events_amount = 10
+    now = datetime.now()
+
+    for i in range(pending_events_amount):
+        mixer.blend(models.Event, author=user, subject=mixer.faker.text(35), expiration_date=now - timedelta(days=i))
+
+    events_list = models.get_pending_events(user.id)
+
+    for i in range(len(events_list) - 1):
+        assert events_list[i].expiration_date < events_list[i + 1].expiration_date
 
 
 def test_complete_event(models, mixer):
