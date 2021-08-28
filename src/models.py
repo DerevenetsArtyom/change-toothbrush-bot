@@ -43,7 +43,7 @@ class Event(pw.Model):
 
     @classmethod
     def create_event(cls, user_data: dict) -> None:
-        """Creates event from data passed by user"""
+        """Create event from data passed by user"""
 
         expiration_date = user_data["expiration_date"]
         notification_date = user_data["notification_date"]

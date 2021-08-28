@@ -34,7 +34,6 @@ def main():
 
     if APPLICATION_NAME is None:  # pooling mode, local development
         print("Can't detect 'APPLICATION_NAME' env. Running bot in pooling mode.")
-        print("Note: this is not a great way to deploy the bot in Heroku.")
 
         # Start the Bot
         updater.start_polling()
