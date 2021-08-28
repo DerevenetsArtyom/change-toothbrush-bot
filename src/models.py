@@ -43,7 +43,7 @@ class Event(pw.Model):
 
     @classmethod
     def create_event(cls, user_data: dict) -> None:
-        """Creates event from data passed by user"""
+        """Create event from data passed by user"""
 
         expiration_date = user_data["expiration_date"]
         notification_date = user_data["notification_date"]
@@ -66,14 +66,18 @@ def get_pending_events(user_id):
     """Return all pending events (that are waiting its notification time)."""
 
     current_user_id = User.get(user_id=user_id).id
-    return Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
+
+    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
+    return user_events.order_by(Event.expiration_date)
 
 
 def get_expired_events(user_id):
-    """Return all archived / expires events (that have been completed already)."""
+    """Return all archived / expired events (that have been completed already)."""
 
     current_user_id = User.get(user_id=user_id).id
-    return Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
+
+    user_events = Event.select().where(Event.author == current_user_id, Event.completed == True)  # noqa: E712
+    return user_events.order_by(Event.expiration_date)
 
 
 def complete_event(event_id: int) -> None:
