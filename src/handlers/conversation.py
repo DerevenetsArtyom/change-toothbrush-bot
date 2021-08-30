@@ -78,7 +78,7 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
     return NOTIFICATION_DATE
 
 
-def add_expiration_date_from_choice(update: Update, context: CallbackContext) -> None:
+def add_expiration_date_from_choice(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
 
