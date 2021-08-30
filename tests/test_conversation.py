@@ -1,5 +1,7 @@
 import datetime
+from datetime import timedelta
 
+import pytest
 from telegram.ext import ConversationHandler
 
 from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT
@@ -49,8 +51,7 @@ def test_add_expiration_date_custom_handler_invalid_date(bot_app, update, contex
 
 
 def test_add_expiration_date_custom_handler(bot_app, update, context):
-    # emulate user input of correct date format
-    update.message.text = "12-12-2021"
+    update.message.text = "12-12-2021"  # emulate user input of correct date format
 
     return_value = bot_app.call("add_expiration_date_custom", update, context)
 
@@ -63,7 +64,38 @@ def test_add_expiration_date_custom_handler(bot_app, update, context):
     assert return_value == NOTIFICATION_DATE
 
 
-# TODO: add test for 'add_expiration_date_from_choice'
+@pytest.mark.parametrize("desired_time_period", ["week", "month", "3month"])
+def test_add_expiration_date_from_choice(bot_app, update, context, desired_time_period):
+    update.callback_query.data = f"expiration_date:{desired_time_period}"  # emulate user's correct choice
+
+    return_value = bot_app.call("add_expiration_date_from_choice", update, context)
+
+    assert "You've added an expiration date" in update.callback_query.message.reply_text.call_args[0][0]
+
+    expiration_date = None
+    now = datetime.datetime.now().date()
+
+    if desired_time_period == "week":
+        expiration_date = now + timedelta(weeks=1)
+    elif desired_time_period == "month":
+        expiration_date = now + timedelta(days=30)
+    elif desired_time_period == "3month":
+        expiration_date = now + timedelta(days=92)
+
+    assert context.user_data["expiration_date"] == expiration_date
+
+    # Correct step is returned for correct conversation flow
+    assert return_value == NOTIFICATION_DATE
+
+
+def test_add_expiration_date_from_choice_invalid_choice(bot_app, update, context):
+    update.callback_query.data = "invalid-choice-user-somehow-put"
+
+    return_value = bot_app.call("add_expiration_date_from_choice", update, context)
+
+    # We print warning and abort the flow
+    assert update.callback_query.message.reply_text.call_args[0][0] == "Something went wrong. Don't know your choice"
+    assert return_value is None
 
 
 def test_add_notification_date_custom_handler_invalid_date(bot_app, update, context):

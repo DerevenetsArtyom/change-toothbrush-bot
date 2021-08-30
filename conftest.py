@@ -162,4 +162,5 @@ def update(message, tg_user):
         update_id="__randint",
         message=message(from_user=tg_user),
         effective_user=tg_user,
+        callback_query=MagicMock(),
     )()
