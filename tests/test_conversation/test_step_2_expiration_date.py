@@ -13,7 +13,7 @@ def test_add_expiration_date_custom_handler(bot_app, update, context):
 
     assert "You've added an expiration date" in update.message.reply_text.call_args[0][0]
 
-    # We store 'expiration_date' to 'user_data' for the future reference
+    # We store 'expiration_date' in 'user_data' for the future reference
     assert str(context.user_data["expiration_date"]) == "2021-12-12"  # DB keeps dates in slightly different format
 
     # Correct step is returned for correct conversation flow

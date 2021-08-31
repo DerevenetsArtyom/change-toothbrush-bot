@@ -146,7 +146,7 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
     return CONFIRMATION
 
 
-def add_notification_date_from_choice(update: Update, context: CallbackContext) -> None:
+def add_notification_date_from_choice(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     query.answer()
 

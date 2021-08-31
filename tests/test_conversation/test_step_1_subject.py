@@ -6,7 +6,7 @@ def test_start_creating_entry_handler(bot_app, update, context):
 
     assert "Enter your subject or event below" in update.message.reply_text.call_args[0][0]
 
-    # We store 'user_id' to 'user_data' for the future reference
+    # We store 'user_id' in 'user_data' for the future reference
     assert context.user_data["user_id"] == update.effective_user.id
 
     # Correct step is returned for correct conversation flow
@@ -21,7 +21,7 @@ def test_add_new_entry_handler(bot_app, update, context):
 
     assert user_input_text in update.message.reply_text.call_args[0][0]
 
-    # We store 'entry' to 'user_data' for the future reference
+    # We store 'entry' in 'user_data' for the future reference
     assert context.user_data["entry"] == user_input_text
 
     # Correct step is returned for correct conversation flow

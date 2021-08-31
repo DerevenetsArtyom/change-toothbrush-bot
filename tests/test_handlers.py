@@ -13,7 +13,7 @@ def test_start_handler(bot_app, update, context, mocker):
     assert current_user.first_name in update.message.reply_markdown_v2.call_args[0][0]
     assert current_user.last_name in update.message.reply_markdown_v2.call_args[0][0]
 
-    # We store 'user_id' to 'user_data' for the future reference
+    # We store 'user_id' in 'user_data' for the future reference
     assert context.user_data["user_id"] == current_user.id
 
     assert "The available commands" in update.message.reply_text.call_args[0][0]
