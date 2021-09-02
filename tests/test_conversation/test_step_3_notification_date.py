@@ -25,9 +25,9 @@ def test_add_notification_date_custom_handler(bot_app, update, context):
     assert return_value == CONFIRMATION
 
 
-def test_add_notification_date_custom_handler_invalid_date(bot_app, update, context):
-    # TODO: add invalid input formats (non dates) as parameters
-    update.message.text = "I've entered an invalid notification date"  # emulate user input of incorrect date format
+@pytest.mark.parametrize("invalid_input", ["invalid notification date", "42", ""])
+def test_add_notification_date_custom_handler_invalid_date(bot_app, update, context, invalid_input):
+    update.message.text = invalid_input
 
     return_value = bot_app.call("add_notification_date_custom", update, context)
 
