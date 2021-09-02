@@ -8,6 +8,14 @@ from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT,
 from models import Event
 from utils import logger, prettify_date
 
+notification_date_keyboard = [
+    [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
+    [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
+    [InlineKeyboardButton(text="3 months beforehand!", callback_data="notification_date:3month")],
+]
+
+notification_date_keyboard_markup = InlineKeyboardMarkup(notification_date_keyboard)
+
 #####################
 # SUBJECT step (№1) #
 #####################
@@ -61,17 +69,10 @@ def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
         update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return EXPIRATION_DATE
 
-    keyboard = [
-        [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
-        [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="3 months beforehand!", callback_data="notification_date:3month")],
-    ]
-
-    markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
         "You've added an expiration date\! \n"
         "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
-        reply_markup=markup,
+        reply_markup=notification_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
@@ -100,18 +101,10 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     context.user_data["expiration_date"] = expiration_date
 
-    # TODO: this code snippet duplicates the one in 'expiration_date' ('update' -> 'query')
-    keyboard = [
-        [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
-        [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
-        [InlineKeyboardButton(text="3 months beforehand!", callback_data="notification_date:3month")],
-    ]
-
-    markup = InlineKeyboardMarkup(keyboard)
     query.message.reply_text(
         "You've added an expiration date\! \n"
         "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
-        reply_markup=markup,
+        reply_markup=notification_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
