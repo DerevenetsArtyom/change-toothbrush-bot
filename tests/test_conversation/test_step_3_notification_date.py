@@ -3,7 +3,7 @@ from datetime import timedelta
 
 import pytest
 
-from constants import CONFIRMATION, NOTIFICATION_DATE
+from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE
 
 # TODO: add test for correct output of final message in 'add_notification_date_custom' (or in integrations tests?)
 
@@ -78,3 +78,19 @@ def test_add_notification_date_from_choice_invalid_choice(bot_app, update, conte
     # We print warning and abort the flow
     assert update.callback_query.message.reply_text.call_args[0][0] == "Something went wrong. Don't know your choice"
     assert return_value is None
+
+
+def test_add_notification_date_from_choice_missing_data(bot_app, update, context):
+    update.callback_query.data = "notification_date:does-not-matter-now"
+
+    # emulate missing (somehow) entering "expiration date" on previous step
+    context.user_data["expiration_date"] = None
+
+    return_value = bot_app.call("add_notification_date_from_choice", update, context)
+
+    # Invalid 'notification_date' was not stored in 'user_data'
+    assert "notification_date" not in context.user_data
+
+    warning_message = "You have not set an 'expiration date'. Please do manually"
+    assert warning_message in update.callback_query.message.reply_text.call_args[0][0]
+    assert return_value == EXPIRATION_DATE

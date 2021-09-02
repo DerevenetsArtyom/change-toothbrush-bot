@@ -156,7 +156,12 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
 
     desired_time_period = query.data.split(":")[-1]
 
-    expiration_date = context.user_data["expiration_date"]
+    expiration_date = context.user_data.get("expiration_date")
+    if not expiration_date:
+        logger.warning("User 'expiration date' is not set. Present user data - %s", context.user_data)
+        query.message.reply_text("Something went wrong. You have not set an 'expiration date'. Please do manually:")
+        return EXPIRATION_DATE
+
     notification_date = None
 
     if desired_time_period == "week":
