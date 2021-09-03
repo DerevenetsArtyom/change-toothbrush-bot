@@ -16,6 +16,18 @@ notification_date_keyboard = [
 
 notification_date_keyboard_markup = InlineKeyboardMarkup(notification_date_keyboard)
 
+
+def get_confirmation_message(user_data):
+    return (
+        f"You've added notification date! Confirm the data below:\n\n"
+        f'Subject - "{user_data["entry"]}"\n'
+        f'Notification date - "{prettify_date(user_data["notification_date"])}"\n'
+        f'Expiration date - "{prettify_date(user_data["expiration_date"])}"\n\n'
+        f"If everything is correct, please enter /done command.\n"
+        f"If not, enter /cancel command and start again."
+    )
+
+
 #####################
 # SUBJECT step (№1) #
 #####################
@@ -92,6 +104,7 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
     expiration_date = None
     now = datetime.now().date()
 
+    # TODO: move to helper function (and reuse in tests) ?
     if desired_time_period == "week":
         expiration_date = now + timedelta(weeks=1)
     elif desired_time_period == "month":
@@ -127,14 +140,7 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
         update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return NOTIFICATION_DATE
 
-    update.message.reply_text(
-        f"You've added notification date! Confirm the data below:\n\n"
-        f'Subject - "{context.user_data["entry"]}"\n'
-        f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
-        f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
-        f"If everything is correct, please enter /done command.\n"
-        f"If not, enter /cancel command and start again."
-    )
+    update.message.reply_text(text=get_confirmation_message(context.user_data))
 
     return CONFIRMATION
 
@@ -166,15 +172,7 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
 
     context.user_data["notification_date"] = notification_date
 
-    # TODO: this code snippet duplicates the one in 'notification_date' ('update' -> 'query')
-    query.message.reply_text(
-        f"You've added notification date! Confirm the data below:\n\n"
-        f'Subject - "{context.user_data["entry"]}"\n'
-        f'Notification date - "{prettify_date(context.user_data["notification_date"])}"\n'
-        f'Expiration date - "{prettify_date(context.user_data["expiration_date"])}"\n\n'
-        f"If everything is correct, please enter /done command.\n"
-        f"If not, enter /cancel command and start again."
-    )
+    query.message.reply_text(text=get_confirmation_message(context.user_data))
 
     return CONFIRMATION
 
