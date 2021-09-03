@@ -8,6 +8,14 @@ from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE, SUBJECT,
 from models import Event
 from utils import logger, prettify_date
 
+expiration_date_keyboard = [
+    [InlineKeyboardButton(text="In a week!", callback_data="expiration_date:week")],
+    [InlineKeyboardButton(text="In a month!", callback_data="expiration_date:month")],
+    [InlineKeyboardButton(text="In a 3 month!", callback_data="expiration_date:3month")],
+]
+
+expiration_date_keyboard_markup = InlineKeyboardMarkup(expiration_date_keyboard)
+
 notification_date_keyboard = [
     [InlineKeyboardButton(text="A week beforehand!", callback_data="notification_date:week")],
     [InlineKeyboardButton(text="A month beforehand!", callback_data="notification_date:month")],
@@ -48,17 +56,10 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     context.user_data["entry"] = user_text
 
-    keyboard = [
-        [InlineKeyboardButton(text="In a week!", callback_data="expiration_date:week")],
-        [InlineKeyboardButton(text="In a month!", callback_data="expiration_date:month")],
-        [InlineKeyboardButton(text="In a 3 month!", callback_data="expiration_date:3month")],
-    ]
-
-    markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text(
         f"You've added an entry \- *_{escape_markdown(user_text, version=2)}_*\n"
         f"Now select an __expiration date__ from list or add it manually \(dd\-mm\-yyyy\):",
-        reply_markup=markup,
+        reply_markup=expiration_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
@@ -140,7 +141,7 @@ def add_notification_date_custom(update: Update, context: CallbackContext) -> in
         update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return NOTIFICATION_DATE
 
-    update.message.reply_text(text=get_confirmation_message(context.user_data))
+    update.message.reply_text(get_confirmation_message(context.user_data))
 
     return CONFIRMATION
 
@@ -172,7 +173,7 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
 
     context.user_data["notification_date"] = notification_date
 
-    query.message.reply_text(text=get_confirmation_message(context.user_data))
+    query.message.reply_text(get_confirmation_message(context.user_data))
 
     return CONFIRMATION
 
