@@ -5,8 +5,6 @@ import pytest
 
 from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE
 
-# TODO: add test for correct output of final message in 'add_notification_date_custom' (or in integrations tests?)
-
 
 def test_add_notification_date_custom_handler(bot_app, update, context):
     # fill data in 'context.user_data' to be able to show correct output to the user
@@ -23,6 +21,27 @@ def test_add_notification_date_custom_handler(bot_app, update, context):
 
     # Correct step is returned for correct conversation flow
     assert return_value == CONFIRMATION
+
+
+def test_add_notification_date_custom_confirmation_message(bot_app, update, context):
+    user_entry = "Change a toothbrush"
+
+    context.user_data = {"entry": user_entry, "expiration_date": datetime.date(2021, 12, 12)}
+
+    update.message.text = "01-12-2021"  # emulate user input of correct date format
+
+    bot_app.call("add_notification_date_custom", update, context)
+
+    confirmation_message = (
+        f"You've added notification date! Confirm the data below:\n\n"
+        f'Subject - "{user_entry}"\n'
+        f'Notification date - "01 December 2021"\n'
+        f'Expiration date - "12 December 2021"\n\n'
+        f"If everything is correct, please enter /done command.\n"
+        f"If not, enter /cancel command and start again."
+    )
+
+    assert update.message.reply_text.call_args[0][0] == confirmation_message
 
 
 @pytest.mark.parametrize("invalid_input", ["invalid notification date", "42", ""])
