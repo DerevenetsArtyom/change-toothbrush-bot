@@ -71,14 +71,14 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 #############################
 
 
-def add_expiration_date_custom(update: Update, context: CallbackContext) -> int:
+def add_expiration_date_manually(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data %s", context.user_data)
 
     try:
         context.user_data["expiration_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
-        logger.info("wrong input date format - %s", update.message.text)
+        logger.warning("wrong input date format - %s", update.message.text)
         update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return EXPIRATION_DATE
 
@@ -130,14 +130,14 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 ###############################
 
 
-def add_notification_date_custom(update: Update, context: CallbackContext) -> int:
+def add_notification_date_manually(update: Update, context: CallbackContext) -> int:
     logger.info("update.message.text %s", update.message.text)
     logger.info("context.user_data before %s", context.user_data)
 
     try:
         context.user_data["notification_date"] = datetime.strptime(update.message.text, USER_INPUT_DATE_FORMAT).date()
     except ValueError:
-        logger.info("wrong input date format - %s", update.message.text)
+        logger.warning("wrong input date format - %s", update.message.text)
         update.message.reply_text("The date format is wrong. Try again, please. Example: 21-12-2021")
         return NOTIFICATION_DATE
 

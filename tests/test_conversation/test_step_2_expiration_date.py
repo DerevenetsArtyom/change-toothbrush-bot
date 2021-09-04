@@ -6,10 +6,10 @@ import pytest
 from constants import EXPIRATION_DATE, NOTIFICATION_DATE
 
 
-def test_add_expiration_date_custom_handler(bot_app, update, context):
+def test_add_expiration_date_manually_handler(bot_app, update, context):
     update.message.text = "12-12-2021"  # emulate user input of correct date format
 
-    return_value = bot_app.call("add_expiration_date_custom", update, context)
+    return_value = bot_app.call("add_expiration_date_manually", update, context)
 
     assert "You've added an expiration date" in update.message.reply_text.call_args[0][0]
 
@@ -21,10 +21,10 @@ def test_add_expiration_date_custom_handler(bot_app, update, context):
 
 
 @pytest.mark.parametrize("invalid_input", ["invalid expiration date", "42", ""])
-def test_add_expiration_date_custom_handler_invalid_date(bot_app, update, context, invalid_input):
+def test_add_expiration_date_manually_handler_invalid_date(bot_app, update, context, invalid_input):
     update.message.text = invalid_input
 
-    return_value = bot_app.call("add_expiration_date_custom", update, context)
+    return_value = bot_app.call("add_expiration_date_manually", update, context)
 
     assert "The date format is wrong" in update.message.reply_text.call_args[0][0]
 

@@ -14,11 +14,11 @@ from handlers.conversation import (
     EXPIRATION_DATE,
     NOTIFICATION_DATE,
     SUBJECT,
-    add_expiration_date_custom,
     add_expiration_date_from_choice,
+    add_expiration_date_manually,
     add_new_entry,
-    add_notification_date_custom,
     add_notification_date_from_choice,
+    add_notification_date_manually,
     confirmation,
     start_creating_entry,
 )
@@ -93,11 +93,11 @@ def setup_dispatcher(dispatcher):
         states={
             SUBJECT: [MessageHandler(Filters.text & ~Filters.command, add_new_entry)],
             EXPIRATION_DATE: [
-                MessageHandler(Filters.text & ~Filters.command, add_expiration_date_custom),
+                MessageHandler(Filters.text & ~Filters.command, add_expiration_date_manually),
                 CallbackQueryHandler(add_expiration_date_from_choice, pattern="^expiration_date"),
             ],
             NOTIFICATION_DATE: [
-                MessageHandler(Filters.text & ~Filters.command, add_notification_date_custom),
+                MessageHandler(Filters.text & ~Filters.command, add_notification_date_manually),
                 CallbackQueryHandler(add_notification_date_from_choice, pattern="^notification_date"),
             ],
             CONFIRMATION: [CommandHandler("done", confirmation)],

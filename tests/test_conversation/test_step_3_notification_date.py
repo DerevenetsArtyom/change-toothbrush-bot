@@ -6,14 +6,14 @@ import pytest
 from constants import CONFIRMATION, EXPIRATION_DATE, NOTIFICATION_DATE
 
 
-def test_add_notification_date_custom_handler(bot_app, update, context):
+def test_add_notification_date_manually_handler(bot_app, update, context):
     # fill data in 'context.user_data' to be able to show correct output to the user
     context.user_data["entry"] = None
     context.user_data["expiration_date"] = datetime.date(2021, 12, 12)
 
     update.message.text = "01-12-2021"  # emulate user input of correct date format
 
-    return_value = bot_app.call("add_notification_date_custom", update, context)
+    return_value = bot_app.call("add_notification_date_manually", update, context)
 
     assert "You've added notification date" in update.message.reply_text.call_args[0][0]
 
@@ -23,14 +23,14 @@ def test_add_notification_date_custom_handler(bot_app, update, context):
     assert return_value == CONFIRMATION
 
 
-def test_add_notification_date_custom_confirmation_message(bot_app, update, context):
+def test_add_notification_date_manually_confirmation_message(bot_app, update, context):
     user_entry = "Change a toothbrush"
 
     context.user_data = {"entry": user_entry, "expiration_date": datetime.date(2021, 12, 12)}
 
     update.message.text = "01-12-2021"  # emulate user input of correct date format
 
-    bot_app.call("add_notification_date_custom", update, context)
+    bot_app.call("add_notification_date_manually", update, context)
 
     confirmation_message = (
         f"You've added notification date! Confirm the data below:\n\n"
@@ -45,10 +45,10 @@ def test_add_notification_date_custom_confirmation_message(bot_app, update, cont
 
 
 @pytest.mark.parametrize("invalid_input", ["invalid notification date", "42", ""])
-def test_add_notification_date_custom_handler_invalid_date(bot_app, update, context, invalid_input):
+def test_add_notification_date_manually_handler_invalid_date(bot_app, update, context, invalid_input):
     update.message.text = invalid_input
 
-    return_value = bot_app.call("add_notification_date_custom", update, context)
+    return_value = bot_app.call("add_notification_date_manually", update, context)
 
     assert "The date format is wrong" in update.message.reply_text.call_args[0][0]
 
