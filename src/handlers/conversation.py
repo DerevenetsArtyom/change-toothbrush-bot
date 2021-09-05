@@ -26,10 +26,21 @@ notification_date_keyboard_markup = InlineKeyboardMarkup(notification_date_keybo
 
 
 def get_confirmation_message(user_data):
+    notification_date = user_data["notification_date"]
+
+    first_line = "You've added notification date! Confirm the data below:"
+    notification_line = ""
+
+    if not notification_date:
+        first_line = "Confirm the data below:"
+
+    if notification_date:
+        notification_line = f'Notification date - "{prettify_date(user_data["notification_date"])}"\n'
+
     return (
-        f"You've added notification date! Confirm the data below:\n\n"
+        f"{first_line}\n\n"
         f'Subject - "{user_data["entry"]}"\n'
-        f'Notification date - "{prettify_date(user_data["notification_date"])}"\n'
+        f"{notification_line}"
         f'Expiration date - "{prettify_date(user_data["expiration_date"])}"\n\n'
         f"If everything is correct, please enter /done command.\n"
         f"If not, enter /cancel command and start again."
@@ -58,7 +69,7 @@ def add_new_entry(update: Update, context: CallbackContext) -> int:
 
     update.message.reply_text(
         f"You've added an entry \- *_{escape_markdown(user_text, version=2)}_*\n"
-        f"Now select an __expiration date__ from list or add it manually \(dd\-mm\-yyyy\):",
+        f"Now select an __expiration date__ from the list or add it manually \(dd\-mm\-yyyy\):",
         reply_markup=expiration_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -84,7 +95,8 @@ def add_expiration_date_manually(update: Update, context: CallbackContext) -> in
 
     update.message.reply_text(
         "You've added an expiration date\! \n"
-        "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
+        "Now select a __notification date__ from the list or add it manually \(dd\-mm\-yyyy\): \n"
+        "If you don't want to set it \- send /skip",
         reply_markup=notification_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -117,7 +129,8 @@ def add_expiration_date_from_choice(update: Update, context: CallbackContext) ->
 
     query.message.reply_text(
         "You've added an expiration date\! \n"
-        "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\):",
+        "Now select a __notification date__ from list or add it manually \(dd\-mm\-yyyy\): \n"
+        "If you don't want to set it \- send /skip",
         reply_markup=notification_date_keyboard_markup,
         parse_mode=ParseMode.MARKDOWN_V2,
     )
@@ -174,6 +187,15 @@ def add_notification_date_from_choice(update: Update, context: CallbackContext) 
     context.user_data["notification_date"] = notification_date
 
     query.message.reply_text(get_confirmation_message(context.user_data))
+
+    return CONFIRMATION
+
+
+def skip_notification_date(update: Update, context: CallbackContext) -> int:
+    logger.info("User %s did not set notification date", update.message.from_user.first_name)
+
+    context.user_data["notification_date"] = None
+    update.message.reply_text(get_confirmation_message(context.user_data))
 
     return CONFIRMATION
 
