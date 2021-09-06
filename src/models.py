@@ -31,7 +31,7 @@ class Event(pw.Model):
     expiration_date = pw.DateField()
 
     # when user wants to be notified first time - beforehand
-    notification_date = pw.DateField()
+    notification_date = pw.DateField(null=True)
 
     created = pw.DateField(default=datetime.datetime.now)
 
