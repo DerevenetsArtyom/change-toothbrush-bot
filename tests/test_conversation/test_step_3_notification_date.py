@@ -44,6 +44,24 @@ def test_add_notification_date_manually_confirmation_message(bot_app, update, co
     assert update.message.reply_text.call_args[0][0] == confirmation_message
 
 
+def test_skip_notification_date_confirmation_message(bot_app, update, context):
+    user_entry = "Change your pants!"
+
+    context.user_data = {"entry": user_entry, "expiration_date": datetime.date(2021, 12, 12)}
+
+    bot_app.call("skip_notification_date", update, context)
+
+    confirmation_message = (
+        f"Confirm the data below:\n\n"
+        f'Subject - "{user_entry}"\n'
+        f'Expiration date - "12 December 2021"\n\n'
+        f"If everything is correct, please enter /done command.\n"
+        f"If not, enter /cancel command and start again."
+    )
+
+    assert update.message.reply_text.call_args[0][0] == confirmation_message
+
+
 @pytest.mark.parametrize("invalid_input", ["invalid notification date", "42", ""])
 def test_add_notification_date_manually_handler_invalid_date(bot_app, update, context, invalid_input):
     update.message.text = invalid_input

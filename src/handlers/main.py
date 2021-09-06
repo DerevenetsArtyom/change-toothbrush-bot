@@ -20,6 +20,7 @@ from handlers.conversation import (
     add_notification_date_from_choice,
     add_notification_date_manually,
     confirmation,
+    skip_notification_date,
     start_creating_entry,
 )
 from handlers.list import show_expired, show_pending
@@ -99,6 +100,7 @@ def setup_dispatcher(dispatcher):
             NOTIFICATION_DATE: [
                 MessageHandler(Filters.text & ~Filters.command, add_notification_date_manually),
                 CallbackQueryHandler(add_notification_date_from_choice, pattern="^notification_date"),
+                CommandHandler("skip", skip_notification_date),
             ],
             CONFIRMATION: [CommandHandler("done", confirmation)],
             # GENDER: [MessageHandler(Filters.regex('^(Boy|Girl|Other)$'), gender)],
