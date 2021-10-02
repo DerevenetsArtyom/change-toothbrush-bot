@@ -23,3 +23,17 @@ def prettify_date(date_object) -> str:
     """Format datetime object to human-friendly format"""
 
     return date_object.strftime(HUMAN_READABLE_OUTPUT_DATE_FORMAT)
+
+
+def get_event_message(event):
+    """Constructing message for single event based on event data to be displayed in the list of events"""
+
+    notification_date_line = ""
+    if event.notification_date:
+        notification_date_line = f"Notification date: {prettify_date(event.notification_date)}\n"
+
+    return (
+        f"Subject: {event.subject}\n"
+        f"{notification_date_line}"
+        f"Expiration date: {prettify_date(event.expiration_date)}\n"
+    )

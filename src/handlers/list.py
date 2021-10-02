@@ -2,21 +2,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
 from models import get_expired_events, get_pending_events
-from utils import prettify_date
-
-
-def get_event_message(event):
-    """Constructing message for single event based on event data to be displayed in the list of events"""
-
-    notification_date_line = ""
-    if event.notification_date:
-        notification_date_line = f"Notification date: {prettify_date(event.notification_date)}\n"
-
-    return (
-        f"Subject: {event.subject}\n"
-        f"{notification_date_line}"
-        f"Expiration date: {prettify_date(event.expiration_date)}\n"
-    )
+from utils import get_event_message
 
 
 def show_pending(update: Update, _: CallbackContext) -> None:
