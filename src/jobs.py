@@ -2,7 +2,9 @@ import os
 import socket
 import urllib.request
 
+from telegram import ParseMode
 from telegram.ext import CallbackContext
+from telegram.utils.helpers import escape_markdown
 
 from models import User, complete_event, get_events_for_expiration, get_events_for_notification
 from utils import prettify_date
@@ -17,10 +19,11 @@ def check_events_for_notification(context: CallbackContext):
         for event in today_events_to_notify:
             context.bot.send_message(
                 chat_id=user.chat_id,
-                text=f"You wanted me to notify you about:"
-                f"Subject: {event.subject}\n"
-                f"Notification date: {prettify_date(event.notification_date)}\n"
-                f"Expiration date: {prettify_date(event.expiration_date)}\n",
+                text=f"You wanted me to notify you about:\n"
+                f"*__{escape_markdown(event.subject, version=2)}__*\n"
+                f"Notification date: _{prettify_date(event.notification_date)}_\n"
+                f"Expiration date:   _{prettify_date(event.expiration_date)}_\n",
+                parse_mode=ParseMode.MARKDOWN_V2,
             )
 
     HEALTHCHECKS_NOTIFICATION_UUID = os.getenv("HEALTHCHECKS_NOTIFICATION_UUID")
