@@ -121,10 +121,20 @@ def test_get_events_for_notification(models, user, mixer):
     assert models.get_events_for_notification(user.id).count() == events_for_notification_amount
 
 
+def test_get_events_for_notification_date_is_empty(models, user, mixer):
+    events_for_notification_amount = 3
+
+    for i in range(events_for_notification_amount):
+        mixer.blend(models.Event, author=user)  # 'notification_date' is missing
+
+    assert models.get_events_for_notification(user.id).count() == 0
+
+
 def test_get_events_for_expiration(models, user, mixer):
     events_for_expiration_amount = 3
 
     for i in range(events_for_expiration_amount):
         mixer.blend(models.Event, author=user, notification_date=datetime.now().date())
 
+    # TODO: fix the method, it's wrong
     assert models.get_events_for_notification(user.id).count() == events_for_expiration_amount
