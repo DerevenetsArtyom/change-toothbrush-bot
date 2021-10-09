@@ -38,12 +38,16 @@ def check_events_for_expiration(context: CallbackContext):
         today_events_to_expire = get_events_for_expiration(user.user_id)
 
         for event in today_events_to_expire:
+            notification_date_line = ""
+            if event.notification_date:
+                notification_date_line = f"(you were notified on: {prettify_date(event.notification_date)})\n"
+
             context.bot.send_message(
                 chat_id=user.chat_id,
                 text=f"This event is expired today:"
                 f"Subject: {event.subject}\n"
                 f"Expiration date: {prettify_date(event.expiration_date)}\n"
-                f"(you were notified on: {prettify_date(event.notification_date)})\n",
+                f"{notification_date_line}",
             )
 
             complete_event(event.id)
