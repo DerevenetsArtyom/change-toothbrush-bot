@@ -13,6 +13,16 @@ def user(models, mixer):
     )
 
 
+@pytest.fixture
+def another_user(models, mixer):
+    return models.User.create(
+        user_id=2,
+        chat_id=2,
+        first_name=mixer.faker.first_name(),
+        last_name=mixer.faker.last_name(),
+    )
+
+
 def test_create_event(models, user):
     user_data = {
         "expiration_date": date(year=2021, month=12, day=1),
@@ -46,6 +56,15 @@ def test_get_expired_events(models, user, mixer):
     assert models.get_expired_events(user.id).count() == expired_events_amount
 
 
+def test_get_expired_events_for_different_user(models, user, another_user, mixer):
+    expired_events_amount = 3
+
+    for i in range(expired_events_amount):
+        mixer.blend(models.Event, author=another_user, subject=mixer.faker.text(35), completed=True)
+
+    assert not models.get_expired_events(user.id)  # all events are bind to 'another_user'
+
+
 def test_get_expired_events_ordering(models, user, mixer):
     expired_events_amount = 10
     now = datetime.now()
@@ -72,6 +91,15 @@ def test_get_pending_events(models, user, mixer):
         mixer.blend(models.Event, author=user, subject=mixer.faker.text(35))
 
     assert models.get_pending_events(user.id).count() == pending_events_amount
+
+
+def test_get_pending_events_for_different_user(models, user, another_user, mixer):
+    pending_events_amount = 3
+
+    for i in range(pending_events_amount):
+        mixer.blend(models.Event, author=another_user, subject=mixer.faker.text(35))
+
+    assert not models.get_pending_events(user.id)  # all events are bind to 'another_user'
 
 
 def test_get_pending_events_ordering(models, user, mixer):
@@ -121,6 +149,15 @@ def test_get_events_for_notification(models, user, mixer):
     assert models.get_events_for_notification(user.id).count() == events_for_notification_amount
 
 
+def test_get_events_for_notification_for_different_user(models, user, another_user, mixer):
+    events_for_notification_amount = 3
+
+    for i in range(events_for_notification_amount):
+        mixer.blend(models.Event, author=another_user, notification_date=datetime.now().date())
+
+    assert not models.get_events_for_notification(user.id)
+
+
 def test_get_events_for_notification_date_is_empty(models, user, mixer):
     events_for_notification_amount = 3
 
@@ -137,3 +174,12 @@ def test_get_events_for_expiration(models, user, mixer):
         mixer.blend(models.Event, author=user, expiration_date=datetime.now().date())
 
     assert models.get_events_for_expiration(user.id).count() == events_for_expiration_amount
+
+
+def test_get_events_for_expiration_for_different_user(models, user, another_user, mixer):
+    events_for_expiration_amount = 3
+
+    for i in range(events_for_expiration_amount):
+        mixer.blend(models.Event, author=another_user, expiration_date=datetime.now().date())
+
+    assert not models.get_events_for_expiration(user.id)
