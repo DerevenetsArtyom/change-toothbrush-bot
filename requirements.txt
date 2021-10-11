@@ -1,5 +1,5 @@
 Babel==2.9.1
-python-dotenv==0.19.0
+python-dotenv==0.19.1
 python-telegram-bot==13.7
 peewee==3.14.4
 psycopg2==2.9.1
