@@ -6,5 +6,5 @@ psycopg2==2.9.1
 pytest==6.2.5
 pytest-mock==3.6.1
 sentry-sdk==1.4.3
-faker==9.6.0
+faker==9.7.1
 mixer==7.2.0
