@@ -130,6 +130,24 @@ dokku certs:add [app_name] < cert-key.tar
 dokku certs:report [app_name]
 ```
 
+4. \*** If you don’t have a some sort of setup already, you can enable HTTPS with Letsencrypt.
+Use a community plugin called [dokku-letsencrypt](https://github.com/dokku/dokku-letsencrypt) which will handle the creation of certs.
+```
+sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+
+# You will receive notifications before the certificates expire.
+dokku config:set --no-restart --global DOKKU_LETSENCRYPT_EMAIL=[your-email]
+
+dokku letsencrypt:enable [app_name]
+
+# This would setup cron job to update letsencrypt certificate
+dokku letsencrypt:cron-job --add
+
+# Check that everything is correct
+dokku letsencrypt:list
+dokku certs:report [app_name]
+```
+
 5. In case you need a database (you probably need) - install Postgres plugin and link DB with the app. 
 ```
 sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
