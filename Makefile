@@ -20,7 +20,7 @@ run:
 	@python3.8 src/bot.py
 
 black:
-	@black --line-length 120 --exclude "\.git|\.github|\env|\examples" .
+	@black --line-length 120 --exclude "\.git|\.github|env|examples" .
 
 isort:
 	@isort .

@@ -24,7 +24,7 @@ jobs:
       - name: Run Black
         run: |
           pip install -r requirements-dev.txt
-          black --line-length 120 --exclude "\.git|\.github|\env|\examples" . --check
+          black --line-length 120 --exclude "\.git|\.github|env|examples" . --check
 
   flake:
     runs-on: ubuntu-latest
