@@ -4,7 +4,7 @@ python-telegram-bot==13.11
 peewee==3.14.10
 psycopg2==2.9.3
 pytest==7.1.2
-pytest-mock==3.7.0
+pytest-mock==3.8.1
 sentry-sdk==1.5.12
 faker==12.0.1
 mixer==7.2.2
