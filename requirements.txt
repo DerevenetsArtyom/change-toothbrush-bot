@@ -1,7 +1,7 @@
 Babel==2.10.3
 python-dotenv==0.20.0
 python-telegram-bot==13.13
-peewee==3.15.0
+peewee==3.15.1
 psycopg2==2.9.3
 pytest==7.1.2
 pytest-mock==3.8.2
