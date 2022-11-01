@@ -1,4 +1,4 @@
-Babel==2.10.3
+Babel==2.11.0
 python-dotenv==0.21.0
 python-telegram-bot==13.13
 peewee==3.15.3
