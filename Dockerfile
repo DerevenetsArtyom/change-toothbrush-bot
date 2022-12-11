@@ -20,7 +20,4 @@ RUN set -ex && \
 # copy project
 COPY . /app/
 
-# expose port 8000
-EXPOSE 8000
-
 CMD ["python3", "src/bot.py"]
