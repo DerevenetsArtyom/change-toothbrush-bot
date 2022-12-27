@@ -65,10 +65,11 @@ def create_tables():
 def get_pending_events(user_id):
     """Return all pending events (that are waiting its notification time)."""
 
-    current_user_id = User.get(user_id=user_id).id
+    with database:
+        current_user_id = User.get(user_id=user_id).id
 
-    user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
-    return user_events.order_by(Event.expiration_date)
+        user_events = Event.select().where(Event.author == current_user_id, Event.completed == False)  # noqa: E712
+        return user_events.order_by(Event.expiration_date)
 
 
 def get_expired_events(user_id):
