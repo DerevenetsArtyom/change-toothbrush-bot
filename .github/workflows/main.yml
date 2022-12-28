@@ -89,21 +89,20 @@ jobs:
 #          heroku_app_name: ${{ secrets.HEROKU_PROJECT_NAME }}
 #          heroku_email: ${{ secrets.HEROKU_EMAIL_ADSRESS }}
 
-  deploy:
-    # If the jobs above do not pass,the deployment job will not even be executed
-    needs: [black, flake, isort, tests]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Deploy to Dokku
-        uses: idoberko2/dokku-deploy-github-action@v1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          dokku-host: ${{ secrets.DOKKU_HOST }} # I've made that work only with direct IP, not domain name
-          app-name: ${{ secrets.DOKKU_APPLICATION }}
-          git-push-flags: '--force'
+#  deploy:
+#    needs: [black, flake, isort, tests]
+#    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/master'
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Deploy to Dokku
+#        uses: idoberko2/dokku-deploy-github-action@v1
+#        with:
+#          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          dokku-host: ${{ secrets.DOKKU_HOST }}
+#          app-name: ${{ secrets.DOKKU_APPLICATION }}
+#          git-push-flags: '--force'
