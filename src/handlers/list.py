@@ -1,7 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 
-from models import get_expired_events, get_pending_events
+from models import database, get_expired_events, get_pending_events
 from utils import get_event_message
 
 
@@ -27,7 +27,8 @@ def show_pending(update: Update, _: CallbackContext) -> None:
 def show_expired(update: Update, _: CallbackContext) -> None:
     """Show all expired events for the user. Together with pending events - there are all events"""
 
-    user_events = get_expired_events(update.effective_user.id)
+    with database:
+        user_events = get_expired_events(update.effective_user.id)
 
     if user_events.count() == 0:
         update.message.reply_text("You don't have entries yet (")
