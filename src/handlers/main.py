@@ -24,7 +24,7 @@ from handlers.conversation import (
     start_creating_entry,
 )
 from handlers.list import show_expired, show_pending
-from models import create_user, is_user_exists
+from models import create_user, database, is_user_exists
 from utils import get_description, logger
 
 
@@ -50,8 +50,9 @@ def start(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_markdown_v2(rf"Hi {current_user.mention_markdown_v2()}\!")
 
-    if not is_user_exists(current_user):
-        create_user(current_user, chat_id)
+    with database:
+        if not is_user_exists(current_user):
+            create_user(current_user, chat_id)
 
     # Save "user_id" for future linking with new event
     context.user_data["user_id"] = current_user.id
