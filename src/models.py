@@ -58,7 +58,7 @@ class Event(pw.Model):
 
 
 def create_tables():
-    with database:
+    with database.connection_context():
         database.create_tables([Event, User])
 
 

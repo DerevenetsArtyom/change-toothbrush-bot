@@ -50,7 +50,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_markdown_v2(rf"Hi {current_user.mention_markdown_v2()}\!")
 
-    with database:
+    with database.connection_context():
         if not is_user_exists(current_user):
             create_user(current_user, chat_id)
 

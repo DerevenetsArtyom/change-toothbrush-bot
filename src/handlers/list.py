@@ -9,7 +9,7 @@ def show_pending(update: Update, _: CallbackContext) -> None:
     """Show all pending events for the user (that are waiting for it's notification time)"""
 
     # Explicit connection handling is needed to make Fly.io happy since it sometimes lost connection and can't reopen
-    with database:
+    with database.connection_context():
         user_events = get_pending_events(update.effective_user.id)
 
     if user_events.count() == 0:
@@ -30,7 +30,7 @@ def show_expired(update: Update, _: CallbackContext) -> None:
     """Show all expired events for the user. Together with pending events - there are all events"""
 
     # Explicit connection handling is needed to make Fly.io happy since it sometimes lost connection and can't reopen
-    with database:
+    with database.connection_context():
         user_events = get_expired_events(update.effective_user.id)
 
     if user_events.count() == 0:
